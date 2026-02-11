@@ -3,24 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Học Tập Giao Dịch Thông Minh - XAU/USD</title>
+    <title>Hệ Thống Cảnh Báo Gold Spike - XAU/USD</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
+        [cite_start]/* GIỮ NGUYÊN CSS GỐC [cite: 1-116] VÀ TỐI ƯU HÓA */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
             padding: 20px;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: #e6e6e6;
             min-height: 100vh;
         }
-        
         .container {
             max-width: 1600px;
             margin: 0 auto;
@@ -30,34 +24,27 @@
             padding: 30px;
             border: 1px solid rgba(212, 175, 55, 0.2);
         }
-        
         h1 {
             color: #d4af37;
             text-align: center;
             margin-bottom: 30px;
             font-size: 2.5rem;
             text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
-            padding-bottom: 20px;
             border-bottom: 3px solid #d4af37;
+            padding-bottom: 20px;
             background: linear-gradient(45deg, #d4af37, #f7ef8a);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
         .panel {
             background: rgba(30, 30, 40, 0.9);
             border-radius: 15px;
             padding: 25px;
             margin-bottom: 25px;
             border: 1px solid rgba(100, 100, 120, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease;
         }
-        
-        .panel:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-        }
-        
+        .panel:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); }
         .panel-title {
             font-size: 1.4rem;
             font-weight: bold;
@@ -69,2208 +56,500 @@
             align-items: center;
             gap: 10px;
         }
-        
         .panel-title::before {
-            content: '';
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background: #d4af37;
-            border-radius: 50%;
+            content: ''; display: inline-block; width: 8px; height: 8px;
+            background: #d4af37; border-radius: 50%;
         }
-        
-        .control-group {
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        label {
-            display: inline-block;
-            width: 220px;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #b0b0b0;
-            font-size: 0.95rem;
-        }
-        
+        .control-group { margin-bottom: 18px; display: flex; align-items: center; flex-wrap: wrap; gap: 15px; }
+        label { display: inline-block; width: 220px; color: #b0b0b0; font-weight: 500; }
         input, select {
-            padding: 12px 15px;
-            border: 1px solid rgba(100, 100, 120, 0.4);
-            border-radius: 8px;
-            width: 220px;
-            background: rgba(20, 20, 30, 0.8);
-            color: #fff;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
+            padding: 12px 15px; border: 1px solid rgba(100, 100, 120, 0.4);
+            border-radius: 8px; width: 220px; background: rgba(20, 20, 30, 0.8);
+            color: #fff; transition: all 0.3s ease;
         }
-        
-        input:focus, select:focus {
-            outline: none;
-            border-color: #d4af37;
-            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
-        }
-        
+        input:focus, select:focus { outline: none; border-color: #d4af37; }
         button {
-            background: linear-gradient(45deg, #d4af37, #b8941f);
-            color: #1a1a2e;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-right: 10px;
-            margin-bottom: 10px;
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            background: linear-gradient(45deg, #d4af37, #b8941f); color: #1a1a2e;
+            border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer;
+            font-weight: bold; transition: all 0.3s ease; display: inline-flex;
+            align-items: center; gap: 8px; margin-right: 10px; margin-bottom: 10px;
         }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
-            background: linear-gradient(45deg, #e5c046, #c9a428);
-        }
-        
-        button:active {
-            transform: translateY(0);
-        }
-        
-        button.danger {
-            background: linear-gradient(45deg, #ff4757, #ff3838);
-            color: white;
-        }
-        
-        button.danger:hover {
-            background: linear-gradient(45deg, #ff6b81, #ff5252);
-        }
-        
-        button.success {
-            background: linear-gradient(45deg, #00b894, #00a085);
-            color: white;
-        }
-        
-        button.success:hover {
-            background: linear-gradient(45deg, #26de81, #20bf6b);
-        }
-        
-        button.info {
-            background: linear-gradient(45deg, #3498db, #2980b9);
-            color: white;
-        }
-        
-        button.info:hover {
-            background: linear-gradient(45deg, #5dade2, #3498db);
-        }
-        
-        button.warning {
-            background: linear-gradient(45deg, #f39c12, #e67e22);
-            color: white;
-        }
-        
-        button.warning:hover {
-            background: linear-gradient(45deg, #f1c40f, #f39c12);
-        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4); }
+        button.danger { background: linear-gradient(45deg, #ff4757, #ff3838); color: white; }
+        button.success { background: linear-gradient(45deg, #00b894, #00a085); color: white; }
+        button.info { background: linear-gradient(45deg, #3498db, #2980b9); color: white; }
         
         .price-display {
-            font-size: 2.2rem;
-            font-weight: bold;
-            text-align: center;
-            margin: 25px 0;
-            color: #d4af37;
-            padding: 20px;
-            background: rgba(30, 30, 40, 0.7);
-            border-radius: 15px;
-            border: 2px solid rgba(212, 175, 55, 0.3);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            font-size: 2.2rem; font-weight: bold; text-align: center; margin: 25px 0;
+            color: #d4af37; padding: 20px; background: rgba(30, 30, 40, 0.7);
+            border-radius: 15px; border: 2px solid rgba(212, 175, 55, 0.3);
         }
-        
-        .chart-container {
-            height: 450px;
-            margin-bottom: 30px;
-            background: rgba(20, 20, 30, 0.8);
-            border-radius: 15px;
-            padding: 20px;
-            border: 1px solid rgba(100, 100, 120, 0.2);
-        }
-        
-        .trade-info {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        
-        .trade-box {
-            flex: 1;
-            min-width: 300px;
-            background: rgba(25, 25, 35, 0.9);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            border-left: 5px solid #d4af37;
-            transition: transform 0.3s ease;
-        }
-        
-        .trade-box:hover {
-            transform: translateY(-3px);
-        }
-        
-        .trade-box.buy {
-            border-left-color: #00b894;
-            background: rgba(0, 184, 148, 0.05);
-        }
-        
-        .trade-box.sell {
-            border-left-color: #ff4757;
-            background: rgba(255, 71, 87, 0.05);
-        }
-        
-        .trade-box.closed {
-            opacity: 0.7;
-            background: rgba(40, 40, 50, 0.8);
-        }
-        
-        .profit {
-            color: #00b894;
-            font-weight: bold;
-        }
-        
-        .loss {
-            color: #ff4757;
-            font-weight: bold;
-        }
-        
-        #historyList {
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid rgba(100, 100, 120, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-            background: rgba(20, 20, 30, 0.8);
-        }
-        
-        .history-item {
-            padding: 12px 15px;
-            border-bottom: 1px solid rgba(100, 100, 120, 0.2);
-            background: rgba(30, 30, 40, 0.5);
-            margin-bottom: 8px;
-            border-radius: 8px;
-            transition: background 0.3s ease;
-        }
-        
-        .history-item:hover {
-            background: rgba(40, 40, 50, 0.7);
-        }
-        
-        .history-item:last-child {
-            border-bottom: none;
-        }
+        .chart-container { height: 450px; margin-bottom: 30px; background: rgba(20, 20, 30, 0.8); border-radius: 15px; padding: 20px; }
         
         .status-bar {
-            background: linear-gradient(45deg, #2c3e50, #34495e);
-            color: white;
-            padding: 18px 25px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 15px;
+            background: linear-gradient(45deg, #2c3e50, #34495e); color: white;
+            padding: 18px 25px; border-radius: 15px; margin-bottom: 25px;
+            display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px;
             border: 1px solid rgba(212, 175, 55, 0.2);
         }
+        .status-value { font-weight: bold; padding: 4px 10px; border-radius: 6px; background: rgba(255, 255, 255, 0.1); }
         
-        .status-item {
-            margin: 0 5px;
-            font-size: 0.95rem;
-        }
-        
-        .status-value {
-            font-weight: bold;
-            padding: 4px 10px;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .sound-controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .sound-control {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: rgba(20, 20, 30, 0.6);
-            border-radius: 8px;
-        }
+        /* Animation classes */
+        @keyframes pricePulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .price-up { animation: pricePulse 0.5s ease; color: #2ecc71 !important; }
+        .price-down { animation: pricePulse 0.5s ease; color: #e74c3c !important; }
         
         .notification {
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 10px;
-            background: rgba(52, 152, 219, 0.1);
-            border-left: 4px solid #3498db;
+            padding: 15px; margin: 10px 0; border-radius: 10px;
+            background: rgba(52, 152, 219, 0.1); border-left: 4px solid #3498db;
             animation: slideIn 0.3s ease;
         }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        .notification.warning { background: rgba(241, 196, 15, 0.1); border-left-color: #f1c40f; }
         
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
+        /* Stat Cards for Indicators */
+        .stat-card {
+            background: rgba(25, 25, 35, 0.8); padding: 15px; border-radius: 10px;
+            border: 1px solid rgba(100, 100, 120, 0.3); text-align: center;
         }
+        .stat-value { font-size: 1.5rem; font-weight: bold; margin: 10px 0; color: #fff; }
         
-        .notification.success {
-            background: rgba(46, 204, 113, 0.1);
-            border-left-color: #2ecc71;
-        }
-        
-        .notification.warning {
-            background: rgba(241, 196, 15, 0.1);
-            border-left-color: #f1c40f;
-        }
-        
-        .notification.error {
-            background: rgba(231, 76, 60, 0.1);
-            border-left-color: #e74c3c;
-        }
-        
-        .learning-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+        /* Volatility Display Specifics */
+        .volatility-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px dashed rgba(212, 175, 55, 0.4);
             margin-top: 20px;
         }
-        
-        .stat-card {
-            background: rgba(30, 30, 40, 0.8);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-        }
-        
-        .stat-card h4 {
-            color: #d4af37;
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-        }
-        
-        .stat-value {
+        .volatility-value {
             font-size: 2rem;
             font-weight: bold;
-            color: #fff;
-            margin: 10px 0;
-        }
-        
-        .pattern-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            margin: 3px;
-            background: rgba(52, 152, 219, 0.2);
-            color: #3498db;
-            border: 1px solid rgba(52, 152, 219, 0.3);
-        }
-        
-        .pattern-badge.success {
-            background: rgba(46, 204, 113, 0.2);
-            color: #2ecc71;
-            border-color: rgba(46, 204, 113, 0.3);
-        }
-        
-        .pattern-badge.danger {
-            background: rgba(231, 76, 60, 0.2);
-            color: #e74c3c;
-            border-color: rgba(231, 76, 60, 0.3);
-        }
-        
-        .pattern-badge.warning {
-            background: rgba(241, 196, 15, 0.2);
             color: #f1c40f;
-            border-color: rgba(241, 196, 15, 0.3);
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.3);
         }
-        
-        #suggestionsContainer {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 350px;
-            z-index: 1000;
-            max-height: 80vh;
-            overflow-y: auto;
+
+        /* History List */
+        #historyList {
+            max-height: 300px; overflow-y: auto;
+            border: 1px solid rgba(100, 100, 120, 0.3);
+            border-radius: 10px; padding: 15px; background: rgba(20, 20, 30, 0.8);
         }
-        
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(30, 30, 40, 0.5);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: rgba(212, 175, 55, 0.5);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(212, 175, 55, 0.7);
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .container {
-                padding: 20px;
-            }
-            
-            .trade-box {
-                min-width: 250px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .control-group {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            input, select {
-                width: 100%;
-            }
-            
-            .trade-box {
-                min-width: 100%;
-            }
-            
-            .status-bar {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            #suggestionsContainer {
-                width: 90%;
-                left: 5%;
-                right: 5%;
-            }
-        }
-        
-        /* Animation for price change */
-        @keyframes pricePulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .price-up {
-            animation: pricePulse 0.5s ease;
-            color: #2ecc71 !important;
-        }
-        
-        .price-down {
-            animation: pricePulse 0.5s ease;
-            color: #e74c3c !important;
-        }
-        
-        /* Loading animation */
-        .loader {
-            border: 3px solid rgba(212, 175, 55, 0.3);
-            border-top: 3px solid #d4af37;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Tooltip */
-        .tooltip {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 200px;
-            background-color: rgba(30, 30, 40, 0.95);
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 10px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.3s;
+        .history-item {
+            padding: 10px; border-bottom: 1px solid rgba(100, 100, 120, 0.2);
             font-size: 0.9rem;
-            border: 1px solid rgba(212, 175, 55, 0.3);
         }
         
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
+        /* Preset Controls */
+        .preset-controls, .indicator-alert-group {
+            background: rgba(20, 20, 30, 0.8); padding: 15px; border-radius: 10px; margin-bottom: 15px;
         }
-        
-        /* Trading button pulse animation */
-        @keyframes tradePulse {
-            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
-        }
-        
-        .trading-active {
-            animation: tradePulse 2s infinite;
-        }
-        
-        /* Badge for active trades */
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            font-size: 0.75rem;
-            font-weight: bold;
-            border-radius: 12px;
-            margin-left: 8px;
-        }
-        
-        .badge.success {
-            background: #2ecc71;
-            color: white;
-        }
-        
-        .badge.danger {
-            background: #e74c3c;
-            color: white;
-        }
-        
-        .badge.info {
-            background: #3498db;
-            color: white;
-        }
+        .indicator-alert-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎯 HỆ THỐNG HỌC TẬP GIAO DỊCH THÔNG MINH - VÀNG (XAU/USD)</h1>
+        <h1>🚀 GOLD SPIKE ALERT SYSTEM</h1>
         
-        <!-- STATUS BAR -->
         <div class="status-bar" id="tradingStatus">
-            <div class="status-item">🔧 Chế độ: <span id="modeText" class="status-value">Thủ Công</span></div>
-            <div class="status-item">💰 Số dư: <span id="balanceText" class="status-value profit">$1,000.00</span></div>
+            <div class="status-item">📡 Kết nối: <span id="connectionStatus" class="status-value" style="color:#2ecc71">Đã kết nối</span></div>
             <div class="status-item">📊 Giá hiện tại: <span id="currentPrice" class="status-value">0.00</span> USD</div>
-            <div class="status-item">📈 Lệnh hôm nay: <span id="tradesCount" class="status-value">0</span></div>
-            <div class="status-item">🔄 Lệnh đang mở: <span id="openTradesCount" class="status-value">0</span></div>
-            <div class="status-item">🧠 Mẫu đã học: <span id="patternsCount" class="status-value">0</span></div>
+            <div class="status-item">⚡ Biến động (1p): <span id="statusVolatility" class="status-value">0.00</span> USD</div>
         </div>
         
-        <!-- PRICE DISPLAY -->
         <div class="price-display">
-            <div>💰 GIÁ VÀNG HIỆN TẠI</div>
-            <div id="priceValue" style="font-size: 2.8rem; margin: 10px 0;">0.00 USD</div>
-            <div id="priceChange" style="font-size: 1.2rem; opacity: 0.8;">Đang cập nhật...</div>
+            <div style="font-size: 1rem; opacity: 0.7;">GIÁ VÀNG THẾ GIỚI (XAU/USD)</div>
+            <div id="priceValue" style="font-size: 3.5rem; margin: 10px 0; text-shadow: 0 0 20px rgba(212, 175, 55, 0.2);">0.00 USD</div>
+            <div id="priceChange" style="font-size: 1.5rem; opacity: 0.9;">Đang cập nhật...</div>
         </div>
 
-        <!-- PHẦN 1: GIAO DỊCH THỦ CÔNG -->
-        <div class="panel">
-            <div class="panel-title">⚡ GIAO DỊCH THỦ CÔNG</div>
+        <div class="panel" style="border-left: 5px solid #f1c40f;">
+            <div class="panel-title">⚡ CẢNH BÁO BIẾN ĐỘNG MẠNH (SPIKE)</div>
             
-            <div class="control-group">
-                <label for="virtualBalance">💰 Số dư ảo (USD):</label>
-                <input type="number" id="virtualBalance" value="1000" min="100" step="100">
-            </div>
-            
-            <div class="control-group">
-                <label for="lotSize">📦 Khối lượng (lot):</label>
-                <input type="number" id="lotSize" value="0.1" min="0.01" step="0.01">
-            </div>
-            
-            <div class="control-group">
-                <label for="leverage">⚖️ Đòn bẩy:</label>
-                <select id="leverage">
-                    <option value="1">1x</option>
-                    <option value="5">5x</option>
-                    <option value="10" selected>10x</option>
-                    <option value="20">20x</option>
-                    <option value="50">50x</option>
-                </select>
-            </div>
-            
-            <div class="control-group">
-                <label for="stopLoss">🛡️ Stop Loss (pips):</label>
-                <input type="number" id="stopLoss" value="50" min="10" step="10">
-            </div>
-            
-            <div class="control-group">
-                <label for="takeProfit">🎯 Take Profit (pips):</label>
-                <input type="number" id="takeProfit" value="65" min="10" step="10">
-            </div>
-            
-            <div style="margin-top: 25px; text-align: center;">
-                <button onclick="executeManualTrade('BUY')" class="success trading-active">
-                    📈 MUA (BUY)
-                </button>
-                <button onclick="executeManualTrade('SELL')" class="danger trading-active">
-                    📉 BÁN (SELL)
-                </button>
-                <button onclick="closeAllTrades()" class="warning">
-                    ✖️ ĐÓNG TẤT CẢ
-                </button>
-                <button onclick="showAdvancedSettings()" class="info">
-                    ⚙️ CÀI ĐẶT NÂNG CAO
-                </button>
-            </div>
-            
-            <div id="currentTradeDetails" style="margin-top: 25px; display: none;">
-                <div class="panel-title" style="margin-top: 0;">📊 LỆNH ĐANG MỞ</div>
-                <div class="trade-info" id="tradeBoxes"></div>
-            </div>
-        </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 30px;">
+                <div style="flex: 1; min-width: 300px;">
+                    <div class="control-group">
+                        <label for="spikeThreshold">🔔 Ngưỡng biến động giá (USD):</label>
+                        <input type="number" id="spikeThreshold" value="4.0" min="0.5" step="0.5" style="font-weight: bold; color: #f1c40f;">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="spikeSoundInput">🔊 Âm thanh cảnh báo Spike:</label>
+                        <input type="file" id="spikeSoundInput" accept="audio/*">
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <button id="btnToggleSpike" onclick="toggleSpikeAlert()" class="warning" style="width: 100%; justify-content: center; padding: 15px;">
+                            🛡️ BẬT CẢNH BÁO SPIKE
+                        </button>
+                    </div>
+                </div>
 
-        <!-- PHẦN 2: HỆ THỐNG HỌC TẬP THÔNG MINH -->
-        <div class="panel">
-            <div class="panel-title">🧠 HỆ THỐNG HỌC TẬP THÔNG MINH</div>
-            
-            <!-- CHẾ ĐỘ HOẠT ĐỘNG -->
-            <div class="control-group">
-                <label for="tradingMode">🎛️ Chế độ hoạt động:</label>
-                <select id="tradingMode" onchange="changeTradingMode()">
-                    <option value="manual">👨‍💼 Thủ Công (Tôi tự trade)</option>
-                    <option value="learning">📚 Học Tập (Học cách tôi trade)</option>
-                    <option value="suggestion">💡 Đề Xuất (Gợi ý setup tương tự)</option>
-                    <option value="auto">🤖 Tự Động (Tự trade sau khi học)</option>
-                </select>
-            </div>
-            
-            <!-- CÀI ĐẶT HỌC TẬP -->
-            <div class="control-group">
-                <label>🎯 Độ tin cậy tối thiểu:</label>
-                <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
-                    <input type="range" id="minConfidence" min="50" max="95" value="70" style="flex: 1;">
-                    <span id="confidenceValue" style="font-weight: bold; min-width: 50px;">70%</span>
-                </div>
-            </div>
-            
-            <div class="control-group">
-                <label>📊 Số mẫu tối thiểu:</label>
-                <input type="number" id="minSamples" value="5" min="3" max="20" style="width: 100px;">
-                <span style="opacity: 0.8;">(cần ít nhất X mẫu giống nhau)</span>
-            </div>
-            
-            <!-- NÚT ĐIỀU KHIỂN HỌC TẬP -->
-            <div style="margin-top: 25px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
-                <button onclick="startLearningMode()" class="info">
-                    📝 BẮT ĐẦU HỌC
-                </button>
-                <button onclick="analyzeMyStrategy()" class="info">
-                    📊 PHÂN TÍCH CHIẾN LƯỢC
-                </button>
-                <button onclick="exportLearningData()" class="success">
-                    💾 XUẤT DỮ LIỆU
-                </button>
-                <button onclick="clearLearningData()" class="danger">
-                    🗑️ XÓA DỮ LIỆU
-                </button>
-                <button onclick="resetAll()" class="warning">
-                    🔄 RESET TẤT CẢ
-                </button>
-            </div>
-            
-            <!-- THỐNG KÊ HỌC TẬP -->
-            <div class="learning-stats" id="learningStats">
-                <div class="stat-card">
-                    <h4>📈 THỐNG KÊ TỔNG QUAN</h4>
-                    <div class="stat-value" id="totalPatterns">0</div>
-                    <p>Tổng số mẫu đã học</p>
-                    <div style="margin-top: 15px;">
-                        <span class="pattern-badge success" id="winRate">0% Win Rate</span>
-                        <span class="pattern-badge" id="avgConfidence">0% Tin cậy</span>
-                    </div>
-                </div>
-                
-                <div class="stat-card">
-                    <h4>🎯 MẪU THÀNH CÔNG NHẤT</h4>
-                    <div id="bestPattern" style="font-size: 1.1rem; margin: 10px 0;">Chưa có dữ liệu</div>
-                    <p id="bestPatternStats">Tỉ lệ thắng: 0%</p>
-                </div>
-                
-                <div class="stat-card">
-                    <h4>⚡ TRẠNG THÁI HỆ THỐNG</h4>
-                    <div id="systemStatus" style="font-size: 1.1rem; margin: 10px 0; color: #2ecc71;">🟢 Đang hoạt động</div>
-                    <p id="lastAnalysis">Lần phân tích cuối: Chưa có</p>
-                    <div id="autoTradeStatus" style="margin-top: 10px; display: none;">
-                        <span class="pattern-badge warning">🤖 AUTO-TRADE ĐANG BẬT</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- DANH SÁCH MẪU ĐÃ HỌC -->
-            <div style="margin-top: 25px;">
-                <div class="panel-title" style="margin-bottom: 15px;">📋 MẪU HÌNH ĐÃ HỌC</div>
-                <div id="patternsList" style="max-height: 300px; overflow-y: auto; padding: 15px; background: rgba(20, 20, 30, 0.6); border-radius: 10px;">
-                    <div style="text-align: center; padding: 20px; opacity: 0.7;">
-                        Chưa có mẫu hình nào được học. Bắt đầu trade thủ công để hệ thống học hỏi!
+                <div style="flex: 1; min-width: 300px;">
+                    <div class="volatility-box">
+                        <div style="color: #b0b0b0; margin-bottom: 10px;">BIẾN ĐỘNG TRONG 1 PHÚT QUA</div>
+                        <div id="displayVolatility" class="volatility-value">0.00 USD</div>
+                        <div id="spikeStatusText" style="margin-top: 10px; font-size: 0.9rem; color: #2ecc71;">Đang theo dõi...</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- PHẦN 3: BIỂU ĐỒ VÀ PHÂN TÍCH -->
         <div class="panel">
-            <div class="panel-title">📊 BIỂU ĐỒ VÀ PHÂN TÍCH</div>
+            <div class="panel-title">📊 BIỂU ĐỒ & CHỈ BÁO</div>
             
             <div class="chart-container">
                 <canvas id="mainChart"></canvas>
             </div>
             
-            <div style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
-                <button onclick="toggleChartType()" class="info">
-                    🔄 ĐỔI LOẠI BIỂU ĐỒ
-                </button>
-                <button onclick="updateChartData()" class="info">
-                    🔄 CẬP NHẬT DỮ LIỆU
-                </button>
-                <button onclick="clearChart()" class="danger">
-                    🗑️ XÓA BIỂU ĐỒ
-                </button>
-                <button onclick="showChartSettings()" class="info">
-                    ⚙️ CÀI ĐẶT BIỂU ĐỒ
-                </button>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                 <button onclick="updateChartData()" class="info small">🔄 Reset Zoom</button>
+                 <button onclick="clearChart()" class="danger small">🗑️ Xóa dữ liệu cũ</button>
             </div>
-            
-            <!-- INDICATOR DISPLAY -->
+
             <div style="margin-top: 25px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
                 <div class="stat-card">
                     <h4>📈 RSI (14)</h4>
                     <div class="stat-value" id="rsiValue">0.00</div>
                     <div id="rsiStatus" style="font-size: 0.9rem;">Đang tính...</div>
                 </div>
-                
                 <div class="stat-card">
                     <h4>📊 MACD</h4>
                     <div class="stat-value" id="macdValue">0.0000</div>
                     <div id="macdStatus" style="font-size: 0.9rem;">Đang tính...</div>
                 </div>
-                
                 <div class="stat-card">
                     <h4>📉 EMA (20)</h4>
                     <div class="stat-value" id="ema20Value">0.00</div>
-                    <div id="ema20Status" style="font-size: 0.9rem;">Đang tính...</div>
+                    <div id="ema20Status" style="font-size: 0.9rem;">---</div>
                 </div>
-                
                 <div class="stat-card">
                     <h4>📈 EMA (50)</h4>
                     <div class="stat-value" id="ema50Value">0.00</div>
-                    <div id="ema50Status" style="font-size: 0.9rem;">Đang tính...</div>
+                    <div id="ema50Status" style="font-size: 0.9rem;">---</div>
                 </div>
             </div>
         </div>
 
-        <!-- PHẦN 4: LỊCH SỬ VÀ CẢNH BÁO -->
         <div class="panel">
-            <div class="panel-title">📝 LỊCH SỬ VÀ CẢNH BÁO</div>
-            
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
-                <!-- LỊCH SỬ GIAO DỊCH -->
-                <div>
-                    <h4 style="color: #d4af37; margin-bottom: 15px;">📋 LỊCH SỬ GIAO DỊCH</h4>
-                    <div id="historyList" style="max-height: 300px;"></div>
-                    <div style="margin-top: 15px; display: flex; gap: 10px;">
-                        <button onclick="clearTradeHistory()" class="danger small">🧹 Xóa Lịch Sử</button>
-                        <button onclick="exportTradeHistory()" class="info small">📤 Xuất CSV</button>
-                    </div>
-                </div>
-                
-                <!-- CẢNH BÁO GIÁ -->
-                <div>
-                    <h4 style="color: #d4af37; margin-bottom: 15px;">🔔 CẢNH BÁO GIÁ</h4>
-                    <div class="control-group" style="flex-direction: column; align-items: flex-start;">
-                        <label for="alertPrices">Mốc giá cảnh báo:</label>
-                        <input type="text" id="alertPrices" placeholder="Ví dụ: 2180,2200,2150" style="width: 100%;">
-                    </div>
-                    <div style="margin-top: 15px; display: flex; gap: 10px;">
-                        <button onclick="setupPriceAlerts()" class="success small">✅ Bật Cảnh Báo</button>
-                        <button onclick="clearAlerts()" class="danger small">🗑️ Xóa Cảnh Báo</button>
-                    </div>
-                    <div id="alertsList" style="margin-top: 15px; max-height: 150px; overflow-y: auto;">
-                        <!-- Alerts will appear here -->
-                    </div>
-                </div>
+            <div class="panel-title">📝 NHẬT KÝ CẢNH BÁO</div>
+            <div id="historyList"></div>
+            <div style="margin-top: 10px; text-align: right;">
+                <button onclick="document.getElementById('historyList').innerHTML=''" class="danger small" style="margin:0;">Xóa Nhật Ký</button>
             </div>
         </div>
 
-        <!-- PHẦN 5: CÀI ĐẶT ÂM THANH -->
-        <div class="panel">
-            <div class="panel-title">🔊 CÀI ĐẶT ÂM THANH</div>
-            
-            <div class="sound-controls">
-                <div class="sound-control">
-                    <label>🔊 Mở lệnh:</label>
-                    <input type="file" id="openSoundInput" accept="audio/*" style="flex: 1;">
-                </div>
-                <div class="sound-control">
-                    <label>🎯 Take Profit:</label>
-                    <input type="file" id="tpSoundInput" accept="audio/*" style="flex: 1;">
-                </div>
-                <div class="sound-control">
-                    <label>🛡️ Stop Loss:</label>
-                    <input type="file" id="slSoundInput" accept="audio/*" style="flex: 1;">
-                </div>
-                <div class="sound-control">
-                    <label>💡 Đề xuất:</label>
-                    <input type="file" id="suggestionSoundInput" accept="audio/*" style="flex: 1;">
-                </div>
-                <div class="sound-control">
-                    <label>⚠️ Cảnh báo:</label>
-                    <input type="file" id="alertSoundInput" accept="audio/*" style="flex: 1;">
-                </div>
-            </div>
-            
-            <div class="control-group" style="margin-top: 20px;">
-                <label for="useGlobalSound">🔈 Dùng âm thanh chung:</label>
-                <input type="checkbox" id="useGlobalSound" style="width: auto;">
-                <label for="soundVolume">🔊 Âm lượng:</label>
-                <input type="range" id="soundVolume" min="0" max="100" value="50" style="width: 100px;">
-                <span id="volumeValue">50%</span>
-            </div>
-            
-            <div style="margin-top: 25px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
-                <button onclick="saveSoundSettings()" class="success">💾 LƯU CÀI ĐẶT</button>
-                <button onclick="testAllSounds()" class="info">▶️ KIỂM TRA ÂM THANH</button>
-                <button onclick="resetSoundSettings()" class="danger">🔄 RESET ÂM THANH</button>
-            </div>
-        </div>
-
-        <!-- THÔNG TIN HỆ THỐNG -->
         <div style="margin-top: 30px; padding: 20px; background: rgba(30, 30, 40, 0.6); border-radius: 12px; text-align: center; font-size: 0.9rem; opacity: 0.8;">
-            <p>🚀 <strong>HỆ THỐNG HỌC TẬP GIAO DỊCH THÔNG MINH</strong> | Phiên bản 2.0 | © 2024</p>
-            <p>💡 Hệ thống này học hỏi từ cách bạn trade và đề xuất/auto-trade khi có setup tương tự với độ tin cậy cao</p>
-        </div>
-    </div>
-
-    <!-- CONTAINER CHO ĐỀ XUẤT -->
-    <div id="suggestionsContainer"></div>
-
-    <!-- MODAL CHO CÀI ĐẶT NÂNG CAO -->
-    <div id="advancedSettingsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;">
-        <div style="background: rgba(30, 30, 40, 0.95); padding: 30px; border-radius: 20px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
-            <h3 style="color: #d4af37; margin-bottom: 20px;">⚙️ CÀI ĐẶT NÂNG CAO</h3>
-            <!-- Advanced settings content will be added here -->
-            <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: flex-end;">
-                <button onclick="closeAdvancedSettings()" class="danger">ĐÓNG</button>
-                <button onclick="saveAdvancedSettings()" class="success">LƯU CÀI ĐẶT</button>
-            </div>
+            <p>🚀 <strong>HỆ THỐNG CẢNH BÁO GOLD SPIKE</strong> | Simplified Version | © 2026</p>
         </div>
     </div>
 
     <script>
-        // ==================== KHAI BÁO BIẾN TOÀN CỤC ====================
-        const FINNHUB_API_KEY = 'd1l6t99r01qt4thebangd1l6t99r01qt4thebao0';
+        // ==================== KHAI BÁO BIẾN ====================
+        const FINNHUB_API_KEY = 'd1l6t99r01qt4thebangd1l6t99r01qt4thebao0'; // Giữ nguyên key từ source cũ
         
-        // Biến cốt lõi
         let currentPrice = 0;
         let previousPrice = 0;
-        let virtualBalance = 1000;
-        let tradesToday = 0;
-        let currentTrades = [];
+        let priceHistory = []; // Lưu trữ lịch sử giá {timestamp, price}
         let ws = null;
         let mainChart = null;
         
-        // Biến học tập
-        let tradingMode = 'manual';
-        let learnedPatterns = [];
-        let priceHistory = [];
-        let indicatorHistory = [];
-        let alertLevels = [];
-        let alertedLevels = new Set();
+        // Biến cho tính năng Volume Spike
+        let spikeEnabled = false;
+        let spikeThreshold = 4.0;
+        let spikeSound = new Audio('https://assets.mixkit.co/active_storage/sfx/250/250-preview.mp3'); // Âm thanh mặc định
+        let lastSpikeAlertTime = 0;
         
-        // Biến âm thanh
-        let sounds = {
-            open: new Audio('https://assets.mixkit.co/active_storage/sfx/286/286-preview.mp3'),
-            tp: new Audio('https://assets.mixkit.co/active_storage/sfx/257/257-preview.mp3'),
-            sl: new Audio('https://assets.mixkit.co/active_storage/sfx/255/255-preview.mp3'),
-            suggestion: new Audio('https://assets.mixkit.co/active_storage/sfx/286/286-preview.mp3'),
-            alert: new Audio('https://assets.mixkit.co/active_storage/sfx/250/250-preview.mp3')
-        };
-        
-        let useGlobalSound = false;
-        let soundVolume = 50;
-        
-        // Các mẫu hình
-        const PATTERN_TYPES = {
-            SUPPORT_BOUNCE: { name: 'Hỗ trợ phản hồi', color: '#2ecc71' },
-            RESISTANCE_REJECTION: { name: 'Kháng cự từ chối', color: '#e74c3c' },
-            BREAKOUT: { name: 'Phá vỡ', color: '#3498db' },
-            TREND_CONTINUATION: { name: 'Tiếp diễn xu hướng', color: '#9b59b6' },
-            TREND_REVERSAL: { name: 'Đảo chiều', color: '#f39c12' },
-            OVERBOUGHT: { name: 'Quá mua', color: '#e74c3c' },
-            OVERSOLD: { name: 'Quá bán', color: '#2ecc71' }
-        };
-
-        // ==================== KHỞI TẠO HỆ THỐNG ====================
-        async function initializeSystem() {
+        // ==================== KHỞI TẠO ====================
+        function initializeSystem() {
             console.log('🚀 Đang khởi tạo hệ thống...');
             
-            // Load dữ liệu đã lưu
-            loadSavedData();
-            
-            // Khởi tạo biểu đồ
+            // Load Settings
+            const savedThreshold = localStorage.getItem('spikeThreshold');
+            if(savedThreshold) {
+                document.getElementById('spikeThreshold').value = savedThreshold;
+                spikeThreshold = parseFloat(savedThreshold);
+            }
+
             initChart();
-            
-            // Kết nối WebSocket
             connectWebSocket();
             
-            // Thiết lập các sự kiện
-            setupEventListeners();
-            
-            // Cập nhật giao diện
-            updateAllDisplays();
-            
-            // Bắt đầu các interval
-            startIntervals();
-            
-            console.log('✅ Hệ thống đã khởi động thành công!');
-            showNotification('🚀 Hệ thống học tập thông minh đã sẵn sàng!', 'success');
-        }
-
-        function loadSavedData() {
-            // Load dữ liệu từ localStorage
-            virtualBalance = parseFloat(localStorage.getItem('virtualBalance')) || 1000;
-            tradingMode = localStorage.getItem('tradingMode') || 'manual';
-            learnedPatterns = JSON.parse(localStorage.getItem('learnedPatterns')) || [];
-            currentTrades = JSON.parse(localStorage.getItem('currentTrades')) || [];
-            
-            // Load cài đặt âm thanh
-            useGlobalSound = localStorage.getItem('useGlobalSound') === 'true';
-            soundVolume = parseInt(localStorage.getItem('soundVolume')) || 50;
-            
-            // Update UI
-            document.getElementById('virtualBalance').value = virtualBalance;
-            document.getElementById('tradingMode').value = tradingMode;
-            document.getElementById('useGlobalSound').checked = useGlobalSound;
-            document.getElementById('soundVolume').value = soundVolume;
-            document.getElementById('volumeValue').textContent = soundVolume + '%';
-            
-            // Update volume for all sounds
-            Object.values(sounds).forEach(sound => {
-                sound.volume = soundVolume / 100;
+            // Event Listeners
+            document.getElementById('spikeThreshold').addEventListener('change', function() {
+                spikeThreshold = parseFloat(this.value);
+                localStorage.setItem('spikeThreshold', spikeThreshold);
+                showNotification(`Đã cập nhật ngưỡng biến động: ${spikeThreshold} USD`);
             });
-        }
 
-        function saveData() {
-            localStorage.setItem('virtualBalance', virtualBalance.toString());
-            localStorage.setItem('tradingMode', tradingMode);
-            localStorage.setItem('learnedPatterns', JSON.stringify(learnedPatterns));
-            localStorage.setItem('currentTrades', JSON.stringify(currentTrades));
-            localStorage.setItem('useGlobalSound', useGlobalSound.toString());
-            localStorage.setItem('soundVolume', soundVolume.toString());
-        }
-
-        // ==================== WEBSOCKET CONNECTION ====================
-        function connectWebSocket() {
-            try {
-                if (ws && ws.readyState === WebSocket.OPEN) {
-                    console.log('WebSocket đã kết nối');
-                    return;
+            document.getElementById('spikeSoundInput').addEventListener('change', function(e) {
+                if (e.target.files.length > 0) {
+                    spikeSound = new Audio(URL.createObjectURL(e.target.files[0]));
+                    showNotification('✅ Đã tải âm thanh tùy chỉnh', 'success');
+                    spikeSound.play();
                 }
-                
-                ws = new WebSocket(`wss://ws.finnhub.io?token=${FINNHUB_API_KEY}`);
-                
-                ws.onopen = () => {
-                    console.log('✅ Đã kết nối WebSocket');
-                    showNotification('🔌 Đã kết nối với server giá', 'success');
-                    ws.send(JSON.stringify({ type: 'subscribe', symbol: 'OANDA:XAU_USD' }));
-                };
-                
-                ws.onmessage = async (event) => {
-                    try {
-                        const data = JSON.parse(event.data);
-                        
-                        if (data.type === 'trade' && data.data && data.data.length > 0) {
-                            const trade = data.data[0];
-                            if (trade && trade.p) {
-                                await processNewPrice(parseFloat(trade.p));
-                            }
-                        }
-                    } catch (error) {
-                        console.error('Lỗi xử lý WebSocket message:', error);
-                    }
-                };
-                
-                ws.onerror = (error) => {
-                    console.error('WebSocket error:', error);
-                    showNotification('⚠️ Lỗi kết nối WebSocket', 'error');
-                };
-                
-                ws.onclose = () => {
-                    console.log('WebSocket đóng, đang kết nối lại...');
-                    setTimeout(connectWebSocket, 3000);
-                };
-                
-            } catch (error) {
-                console.error('Lỗi kết nối WebSocket:', error);
-                setTimeout(connectWebSocket, 5000);
-            }
-        }
-
-        async function processNewPrice(newPrice) {
-            if (isNaN(newPrice) || newPrice <= 0) return;
-            
-            // Cập nhật animation cho giá
-            updatePriceDisplay(newPrice);
-            
-            // Lưu vào lịch sử
-            priceHistory.push({
-                timestamp: new Date(),
-                price: newPrice,
-                volume: Math.random() * 100 // Mock volume
             });
-            
-            // Giới hạn lịch sử
-            if (priceHistory.length > 200) {
-                priceHistory.shift();
-            }
-            
-            // Cập nhật indicators
-            updateIndicators();
-            
-            // Kiểm tra trade đang mở
-            checkOpenTrades();
-            
-            // Kiểm tra cảnh báo giá
-            checkPriceAlerts(newPrice);
-            
-            // Kiểm tra cơ hội giao dịch nếu đang ở chế độ suggestion/auto
-            if (tradingMode === 'suggestion' || tradingMode === 'auto') {
-                checkTradingOpportunities();
-            }
-            
-            // Cập nhật biểu đồ
-            updateChart();
-            
-            saveData();
+
+            showNotification('🚀 Hệ thống theo dõi Gold Spike đã sẵn sàng!', 'success');
         }
 
-        function updatePriceDisplay(newPrice) {
-            const priceElement = document.getElementById('priceValue');
-            const previous = currentPrice;
-            currentPrice = newPrice;
+        function toggleSpikeAlert() {
+            spikeEnabled = !spikeEnabled;
+            const btn = document.getElementById('btnToggleSpike');
+            const status = document.getElementById('spikeStatusText');
             
-            // Animation
-            if (previous > 0) {
-                if (newPrice > previous) {
-                    priceElement.classList.remove('price-down');
-                    priceElement.classList.add('price-up');
-                    setTimeout(() => priceElement.classList.remove('price-up'), 500);
-                } else if (newPrice < previous) {
-                    priceElement.classList.remove('price-up');
-                    priceElement.classList.add('price-down');
-                    setTimeout(() => priceElement.classList.remove('price-down'), 500);
-                }
-            }
-            
-            priceElement.textContent = newPrice.toFixed(2) + ' USD';
-            previousPrice = previous;
-            
-            // Update change percentage
-            if (previous > 0) {
-                const change = ((newPrice - previous) / previous * 100).toFixed(2);
-                const changeElement = document.getElementById('priceChange');
-                changeElement.textContent = `${change > 0 ? '+' : ''}${change}%`;
-                changeElement.style.color = change >= 0 ? '#2ecc71' : '#e74c3c';
-            }
-        }
-
-        // ==================== INDICATOR CALCULATIONS ====================
-        function updateIndicators() {
-            if (priceHistory.length < 20) return;
-            
-            // Tính RSI
-            const rsi = calculateRSI(14);
-            document.getElementById('rsiValue').textContent = rsi.toFixed(2);
-            const rsiStatus = document.getElementById('rsiStatus');
-            if (rsi < 30) {
-                rsiStatus.textContent = 'Quá bán';
-                rsiStatus.style.color = '#2ecc71';
-            } else if (rsi > 70) {
-                rsiStatus.textContent = 'Quá mua';
-                rsiStatus.style.color = '#e74c3c';
+            if (spikeEnabled) {
+                btn.innerHTML = '🛑 TẮT CẢNH BÁO SPIKE';
+                btn.classList.remove('warning');
+                btn.classList.add('danger');
+                status.textContent = 'Đang kích hoạt: Sẽ báo động nếu giá chạy > ' + spikeThreshold + ' USD';
+                status.style.color = '#e74c3c';
+                showNotification('Đã BẬT cảnh báo biến động', 'success');
             } else {
-                rsiStatus.textContent = 'Trung lập';
-                rsiStatus.style.color = '#3498db';
+                btn.innerHTML = '🛡️ BẬT CẢNH BÁO SPIKE';
+                btn.classList.remove('danger');
+                btn.classList.add('warning');
+                status.textContent = 'Đã tắt cảnh báo.';
+                status.style.color = '#b0b0b0';
+                showNotification('Đã TẮT cảnh báo biến động', 'info');
             }
+        }
+
+        // ==================== WEBSOCKET & XỬ LÝ GIÁ ====================
+        function connectWebSocket() {
+            ws = new WebSocket(`wss://ws.finnhub.io?token=${FINNHUB_API_KEY}`);
             
-            // Tính MACD
-            const macd = calculateMACD();
-            document.getElementById('macdValue').textContent = macd.histogram.toFixed(4);
-            const macdStatus = document.getElementById('macdStatus');
-            macdStatus.textContent = macd.histogram > 0 ? 'Tăng' : 'Giảm';
-            macdStatus.style.color = macd.histogram > 0 ? '#2ecc71' : '#e74c3c';
+            ws.onopen = () => {
+                document.getElementById('connectionStatus').textContent = 'Đã kết nối';
+                document.getElementById('connectionStatus').style.color = '#2ecc71';
+                ws.send(JSON.stringify({ type: 'subscribe', symbol: 'OANDA:XAU_USD' }));
+            };
             
-            // Tính EMA
-            const ema20 = calculateEMA(20);
-            const ema50 = calculateEMA(50);
+            ws.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.type === 'trade' && data.data && data.data.length > 0) {
+                        const trade = data.data[0];
+                        if (trade && trade.p) {
+                            processNewPrice(parseFloat(trade.p));
+                        }
+                    }
+                } catch (error) { console.error(error); }
+            };
+            
+            ws.onclose = () => {
+                document.getElementById('connectionStatus').textContent = 'Mất kết nối';
+                document.getElementById('connectionStatus').style.color = '#e74c3c';
+                setTimeout(connectWebSocket, 3000);
+            };
+        }
+
+        function processNewPrice(newPrice) {
+            if (!newPrice) return;
+            
+            previousPrice = currentPrice;
+            currentPrice = newPrice;
+            const now = Date.now();
+
+            // 1. Cập nhật hiển thị giá
+            updatePriceDisplay(newPrice, previousPrice);
+
+            // 2. Lưu lịch sử (giữ lại 1000 điểm dữ liệu gần nhất)
+            priceHistory.push({ timestamp: now, price: newPrice });
+            if (priceHistory.length > 1000) priceHistory.shift();
+
+            // 3. Tính toán biến động (Volatility Check)
+            checkVolatility(now);
+
+            // 4. Cập nhật chỉ báo & biểu đồ (mỗi 5 tick để đỡ lag)
+            if (priceHistory.length % 5 === 0) {
+                updateIndicators();
+                updateChart();
+            }
+        }
+
+        function updatePriceDisplay(newPrice, previous) {
+            const el = document.getElementById('priceValue');
+            el.textContent = newPrice.toFixed(2) + ' USD';
+            
+            if (previous > 0) {
+                // Animation màu
+                el.className = newPrice > previous ? 'price-up' : (newPrice < previous ? 'price-down' : '');
+                setTimeout(() => el.className = '', 500);
+                
+                // Phần trăm thay đổi
+                const change = ((newPrice - previous) / previous * 100);
+                const changeEl = document.getElementById('priceChange');
+                changeEl.textContent = `${change > 0 ? '+' : ''}${change.toFixed(4)}%`;
+                changeEl.style.color = change >= 0 ? '#2ecc71' : '#e74c3c';
+                
+                document.getElementById('currentPrice').textContent = newPrice.toFixed(2);
+            }
+        }
+
+        // ==================== LOGIC VOLUME SPIKE QUAN TRỌNG ====================
+        function checkVolatility(currentTime) {
+            // Tìm giá cách đây khoảng 60 giây (1 phút)
+            // Lọc mảng lịch sử để tìm điểm dữ liệu cũ nhất trong vòng 60s
+            const oneMinAgo = currentTime - 60000;
+            
+            // Tìm điểm giá gần với 1 phút trước nhất
+            let pastPriceObj = priceHistory.find(p => p.timestamp >= oneMinAgo);
+            
+            if (!pastPriceObj) {
+                // Nếu chưa đủ dữ liệu 1 phút, lấy điểm dữ liệu đầu tiên
+                pastPriceObj = priceHistory[0]; 
+            }
+
+            const pastPrice = pastPriceObj.price;
+            const diff = Math.abs(currentPrice - pastPrice);
+            
+            // Hiển thị biến động
+            const volEl = document.getElementById('displayVolatility');
+            const statusVolEl = document.getElementById('statusVolatility');
+            
+            volEl.textContent = diff.toFixed(2) + ' USD';
+            statusVolEl.textContent = diff.toFixed(2);
+            
+            // Đổi màu nếu biến động cao
+            if (diff >= spikeThreshold) {
+                volEl.style.color = '#e74c3c'; // Đỏ báo động
+                volEl.style.textShadow = '0 0 15px rgba(231, 76, 60, 0.5)';
+                
+                // KÍCH HOẠT CẢNH BÁO
+                if (spikeEnabled && (currentTime - lastSpikeAlertTime > 5000)) { // Chỉ báo mỗi 5s 1 lần để tránh spam
+                    triggerAlert(diff, currentPrice > pastPrice ? 'TĂNG' : 'GIẢM');
+                    lastSpikeAlertTime = currentTime;
+                }
+            } else {
+                volEl.style.color = '#f1c40f'; // Vàng bình thường
+                volEl.style.textShadow = 'none';
+            }
+        }
+
+        function triggerAlert(diff, direction) {
+            spikeSound.currentTime = 0;
+            spikeSound.play().catch(e => console.log('Chưa tương tác trang web, không thể phát âm thanh'));
+            
+            const msg = `⚡ SPIKE ALERT: Giá ${direction} mạnh ${diff.toFixed(2)} USD trong 1 phút!`;
+            showNotification(msg, 'warning');
+            logToHistory(msg);
+        }
+
+        // ==================== CÁC CHỈ BÁO KỸ THUẬT (RSI, EMA...) ====================
+        function updateIndicators() {
+            if (priceHistory.length < 50) return;
+            
+            const prices = priceHistory.map(p => p.price);
+            
+            // EMA
+            const ema20 = calculateEMA(prices, 20);
+            const ema50 = calculateEMA(prices, 50);
             document.getElementById('ema20Value').textContent = ema20.toFixed(2);
             document.getElementById('ema50Value').textContent = ema50.toFixed(2);
             
-            document.getElementById('ema20Status').textContent = 
-                currentPrice > ema20 ? 'Trên EMA20' : 'Dưới EMA20';
-            document.getElementById('ema50Status').textContent = 
-                currentPrice > ema50 ? 'Trên EMA50' : 'Dưới EMA50';
+            // RSI
+            const rsi = calculateRSI(prices, 14);
+            const rsiEl = document.getElementById('rsiValue');
+            rsiEl.textContent = rsi.toFixed(2);
+            rsiEl.style.color = rsi > 70 ? '#e74c3c' : (rsi < 30 ? '#2ecc71' : '#fff');
+            document.getElementById('rsiStatus').textContent = rsi > 70 ? 'QUÁ MUA' : (rsi < 30 ? 'QUÁ BÁN' : 'Trung tính');
+
+            // MACD (Simplified)
+            const macd = calculateEMA(prices, 12) - calculateEMA(prices, 26);
+            document.getElementById('macdValue').textContent = macd.toFixed(4);
+            document.getElementById('macdStatus').textContent = macd > 0 ? 'Xu hướng Tăng' : 'Xu hướng Giảm';
+            document.getElementById('macdStatus').style.color = macd > 0 ? '#2ecc71' : '#e74c3c';
         }
 
-        function calculateRSI(period = 14) {
-            if (priceHistory.length < period + 1) return 50;
-            
-            let gains = 0;
-            let losses = 0;
-            
-            for (let i = priceHistory.length - period; i < priceHistory.length; i++) {
-                const change = priceHistory[i].price - priceHistory[i - 1].price;
-                if (change > 0) gains += change;
-                else losses += Math.abs(change);
+        function calculateEMA(data, period) {
+            if (data.length < period) return data[data.length - 1];
+            const k = 2 / (period + 1);
+            let ema = data[0];
+            for (let i = 1; i < data.length; i++) {
+                ema = data[i] * k + ema * (1 - k);
             }
-            
-            const avgGain = gains / period;
-            const avgLoss = losses / period;
-            
-            if (avgLoss === 0) return 100;
-            
-            const rs = avgGain / avgLoss;
-            return 100 - (100 / (1 + rs));
-        }
-
-        function calculateEMA(period) {
-            if (priceHistory.length < period) return currentPrice;
-            
-            const prices = priceHistory.slice(-period).map(p => p.price);
-            const multiplier = 2 / (period + 1);
-            
-            let ema = prices[0];
-            for (let i = 1; i < prices.length; i++) {
-                ema = (prices[i] - ema) * multiplier + ema;
-            }
-            
             return ema;
         }
 
-        function calculateMACD() {
-            const ema12 = calculateEMA(12);
-            const ema26 = calculateEMA(26);
-            const macdLine = ema12 - ema26;
-            const signalLine = calculateEMAOfValue(macdLine, 9);
-            const histogram = macdLine - signalLine;
-            
-            return {
-                macdLine,
-                signalLine,
-                histogram,
-                bullish: histogram > 0
-            };
-        }
-
-        function calculateEMAOfValue(value, period) {
-            // Simplified EMA calculation for a single value
-            return value * (2 / (period + 1));
-        }
-
-        // ==================== TRADING FUNCTIONS ====================
-        function executeManualTrade(action) {
-            if (!currentPrice || currentPrice <= 0) {
-                showNotification('⚠️ Chưa có giá, không thể vào lệnh', 'error');
-                return;
+        function calculateRSI(data, period) {
+            if (data.length < period + 1) return 50;
+            let gains = 0, losses = 0;
+            for (let i = data.length - period; i < data.length; i++) {
+                const change = data[i] - data[i - 1];
+                if (change > 0) gains += change;
+                else losses += Math.abs(change);
             }
-            
-            const lotSize = parseFloat(document.getElementById('lotSize').value);
-            const leverage = parseInt(document.getElementById('leverage').value);
-            const stopLossPips = parseInt(document.getElementById('stopLoss').value);
-            const takeProfitPips = parseInt(document.getElementById('takeProfit').value);
-            
-            // Tính toán entry, SL, TP
-            const entryPrice = currentPrice;
-            let stopLoss, takeProfit;
-            
-            if (action === 'BUY') {
-                stopLoss = entryPrice - (stopLossPips / 10); // 1 pip = 0.1 USD cho vàng
-                takeProfit = entryPrice + (takeProfitPips / 10);
-            } else {
-                stopLoss = entryPrice + (stopLossPips / 10);
-                takeProfit = entryPrice - (takeProfitPips / 10);
-            }
-            
-            // Tạo trade object
-            const trade = {
-                id: Date.now(),
-                action: action,
-                entryPrice: entryPrice,
-                stopLoss: stopLoss,
-                takeProfit: takeProfit,
-                lotSize: lotSize,
-                leverage: leverage,
-                status: 'OPEN',
-                openTime: new Date(),
-                type: 'MANUAL',
-                learnedPatternId: null
-            };
-            
-            // Thêm vào danh sách
-            currentTrades.push(trade);
-            
-            // Ghi nhận vào hệ thống học tập nếu đang ở chế độ learning
-            if (tradingMode === 'learning') {
-                recordTradePattern(trade, 'manual');
-            }
-            
-            // Cập nhật giao diện
-            updateTradeDisplay();
-            updateStatusBar();
-            
-            // Phát âm thanh
-            playSound('open');
-            
-            // Log
-            logTrade(`📈 ${action} thủ công @ ${entryPrice.toFixed(2)} | SL: ${stopLoss.toFixed(2)} | TP: ${takeProfit.toFixed(2)}`);
-            
-            saveData();
+            if (losses === 0) return 100;
+            return 100 - (100 / (1 + (gains / losses)));
         }
 
-        function recordTradePattern(trade, reason) {
-            const pattern = analyzeCurrentMarketPattern();
-            
-            const tradeRecord = {
-                id: Date.now(),
-                timestamp: new Date(),
-                pattern: pattern,
-                action: trade.action,
-                entryPrice: trade.entryPrice,
-                stopLoss: trade.stopLoss,
-                takeProfit: trade.takeProfit,
-                lotSize: trade.lotSize,
-                leverage: trade.leverage,
-                reason: reason,
-                outcome: 'PENDING',
-                confidence: calculatePatternConfidence(pattern)
-            };
-            
-            learnedPatterns.push(tradeRecord);
-            updatePatternsDisplay();
-            updateLearningStats();
-            
-            console.log('📝 Đã ghi nhận pattern:', tradeRecord);
-        }
-
-        function analyzeCurrentMarketPattern() {
-            const rsi = calculateRSI(14);
-            const macd = calculateMACD();
-            const ema20 = calculateEMA(20);
-            const ema50 = calculateEMA(50);
-            const trend = getMarketTrend();
-            
-            let patternType = 'MIXED_SIGNAL';
-            
-            // Phân tích pattern dựa trên indicators
-            if (rsi < 30) patternType = 'OVERSOLD';
-            else if (rsi > 70) patternType = 'OVERBOUGHT';
-            else if (currentPrice < ema20 && trend === 'DOWN') patternType = 'TREND_CONTINUATION';
-            else if (currentPrice > ema20 && trend === 'UP') patternType = 'TREND_CONTINUATION';
-            else if (macd.histogram > 0 && rsi > 50) patternType = 'BULLISH';
-            else if (macd.histogram < 0 && rsi < 50) patternType = 'BEARISH';
-            
-            return {
-                type: patternType,
-                rsi: rsi,
-                macd: macd.histogram,
-                ema20: ema20,
-                ema50: ema50,
-                trend: trend,
-                price: currentPrice,
-                timestamp: new Date()
-            };
-        }
-
-        function getMarketTrend() {
-            if (priceHistory.length < 20) return 'SIDEWAYS';
-            
-            const recentPrices = priceHistory.slice(-20);
-            const first = recentPrices[0].price;
-            const last = recentPrices[recentPrices.length - 1].price;
-            const change = ((last - first) / first) * 100;
-            
-            if (Math.abs(change) < 0.5) return 'SIDEWAYS';
-            return change > 0 ? 'UP' : 'DOWN';
-        }
-
-        function calculatePatternConfidence(pattern) {
-            // Tìm các pattern tương tự
-            const similarPatterns = findSimilarPatterns(pattern);
-            
-            if (similarPatterns.length === 0) return 50;
-            
-            // Tính win rate của các pattern tương tự
-            const completed = similarPatterns.filter(p => p.outcome !== 'PENDING');
-            if (completed.length === 0) return 50;
-            
-            const wins = completed.filter(p => p.outcome === 'WIN').length;
-            const winRate = (wins / completed.length) * 100;
-            
-            return Math.min(winRate, 95);
-        }
-
-        function findSimilarPatterns(currentPattern, minSimilarity = 0.7) {
-            return learnedPatterns.filter(pattern => {
-                const similarity = calculatePatternSimilarity(pattern.pattern, currentPattern);
-                return similarity >= minSimilarity;
-            });
-        }
-
-        function calculatePatternSimilarity(p1, p2) {
-            let score = 0;
-            
-            // So sánh loại pattern
-            if (p1.type === p2.type) score += 0.3;
-            
-            // So sánh RSI (trong khoảng ±10)
-            const rsiDiff = Math.abs(p1.rsi - p2.rsi);
-            if (rsiDiff < 5) score += 0.3;
-            else if (rsiDiff < 10) score += 0.2;
-            else if (rsiDiff < 15) score += 0.1;
-            
-            // So sánh trend
-            if (p1.trend === p2.trend) score += 0.2;
-            
-            // So sánh vị trí giá so với EMA
-            const emaRelation1 = p1.price > p1.ema20;
-            const emaRelation2 = p2.price > p2.ema20;
-            if (emaRelation1 === emaRelation2) score += 0.2;
-            
-            return score;
-        }
-
-        function checkOpenTrades() {
-            currentTrades.forEach((trade, index) => {
-                if (trade.status === 'OPEN') {
-                    let closeReason = '';
-                    
-                    if (trade.action === 'BUY') {
-                        if (currentPrice <= trade.stopLoss) closeReason = 'STOP_LOSS';
-                        else if (currentPrice >= trade.takeProfit) closeReason = 'TAKE_PROFIT';
-                    } else {
-                        if (currentPrice >= trade.stopLoss) closeReason = 'STOP_LOSS';
-                        else if (currentPrice <= trade.takeProfit) closeReason = 'TAKE_PROFIT';
-                    }
-                    
-                    if (closeReason) {
-                        closeTrade(trade, closeReason);
-                    }
-                }
-            });
-        }
-
-        function closeTrade(trade, reason) {
-            // Tính lợi nhuận
-            let profit = 0;
-            if (trade.action === 'BUY') {
-                profit = (currentPrice - trade.entryPrice) * trade.lotSize * trade.leverage * 100;
-            } else {
-                profit = (trade.entryPrice - currentPrice) * trade.lotSize * trade.leverage * 100;
-            }
-            
-            // Cập nhật trade
-            trade.status = 'CLOSED';
-            trade.closePrice = currentPrice;
-            trade.closeTime = new Date();
-            trade.closeReason = reason;
-            trade.profit = profit;
-            
-            // Cập nhật số dư
-            virtualBalance += profit;
-            
-            // Cập nhật pattern outcome nếu có
-            if (trade.learnedPatternId) {
-                updatePatternOutcome(trade.learnedPatternId, profit > 0 ? 'WIN' : 'LOSS', profit);
-            }
-            
-            // Phát âm thanh
-            playSound(profit > 0 ? 'tp' : 'sl');
-            
-            // Log
-            const profitText = profit >= 0 ? 
-                `<span class="profit">+${profit.toFixed(2)} USD</span>` : 
-                `<span class="loss">${profit.toFixed(2)} USD</span>`;
-            
-            logTrade(`🔔 Đóng ${trade.action}: ${reason} @ ${currentPrice.toFixed(2)} | Lợi nhuận: ${profitText}`);
-            
-            // Cập nhật giao diện
-            updateTradeDisplay();
-            updateStatusBar();
-            updateChartOnTrade(profit, trade.action, reason);
-            
-            // Tăng số trade hôm nay
-            tradesToday++;
-            
-            saveData();
-        }
-
-        function closeAllTrades() {
-            if (currentTrades.length === 0) {
-                showNotification('⚠️ Không có lệnh nào đang mở', 'warning');
-                return;
-            }
-            
-            if (!confirm(`Đóng tất cả ${currentTrades.length} lệnh đang mở?`)) return;
-            
-            currentTrades.forEach(trade => {
-                if (trade.status === 'OPEN') {
-                    closeTrade(trade, 'MANUAL_CLOSE');
-                }
-            });
-            
-            showNotification(`✅ Đã đóng tất cả lệnh`, 'success');
-        }
-
-        // ==================== LEARNING SYSTEM ====================
-        function changeTradingMode() {
-            const mode = document.getElementById('tradingMode').value;
-            tradingMode = mode;
-            
-            let message = '';
-            switch(mode) {
-                case 'manual':
-                    message = '👨‍💼 Chế độ Thủ Công: Bạn tự quyết định mọi giao dịch';
-                    break;
-                case 'learning':
-                    message = '📚 Chế độ Học Tập: Hệ thống đang học cách bạn trade';
-                    break;
-                case 'suggestion':
-                    message = '💡 Chế độ Đề Xuất: Hệ thống sẽ gợi ý khi phát hiện setup tương tự';
-                    break;
-                case 'auto':
-                    message = '🤖 Chế độ Tự Động: Hệ thống sẽ tự trade với setup có độ tin cậy cao';
-                    break;
-            }
-            
-            showNotification(message, 'success');
-            updateStatusBar();
-            saveData();
-        }
-
-        function startLearningMode() {
-            tradingMode = 'learning';
-            document.getElementById('tradingMode').value = 'learning';
-            showNotification('📚 Đã bật chế độ học tập. Hãy trade thủ công để hệ thống học hỏi!', 'success');
-            saveData();
-        }
-
-        function checkTradingOpportunities() {
-            if (tradingMode !== 'suggestion' && tradingMode !== 'auto') return;
-            
-            const pattern = analyzeCurrentMarketPattern();
-            const similarPatterns = findSimilarPatterns(pattern, 0.6);
-            
-            if (similarPatterns.length === 0) return;
-            
-            const confidence = calculatePatternConfidence(pattern);
-            const minConfidence = parseInt(document.getElementById('minConfidence').value);
-            
-            if (confidence >= minConfidence) {
-                const bestPattern = getBestPattern(similarPatterns);
-                
-                if (tradingMode === 'suggestion') {
-                    showTradingSuggestion(bestPattern, confidence);
-                } else if (tradingMode === 'auto') {
-                    executeAutoTrade(bestPattern, confidence);
-                }
-            }
-        }
-
-        function getBestPattern(patterns) {
-            return patterns.reduce((best, current) => {
-                const bestScore = (best.confidence || 0) + (best.outcome === 'WIN' ? 20 : 0);
-                const currentScore = (current.confidence || 0) + (current.outcome === 'WIN' ? 20 : 0);
-                return currentScore > bestScore ? current : best;
-            });
-        }
-
-        function showTradingSuggestion(pattern, confidence) {
-            // Kiểm tra xem đã có suggestion chưa
-            if (document.querySelector('#suggestionsContainer .notification')) return;
-            
-            const suggestionHTML = `
-                <div class="notification success" style="animation: pulse 2s infinite;">
-                    <strong>💡 GỢI Ý GIAO DỊCH (${confidence.toFixed(1)}% tin cậy)</strong>
-                    <p>📊 Setup: ${PATTERN_TYPES[pattern.pattern.type]?.name || pattern.pattern.type}</p>
-                    <p>🎯 Hành động trước: ${pattern.action}</p>
-                    <p>📈 Kết quả: ${pattern.outcome === 'WIN' ? '✅ Thắng' : pattern.outcome === 'LOSS' ? '❌ Thua' : '⏳ Đang chờ'}</p>
-                    <p>💰 Entry: ${pattern.entryPrice.toFixed(2)} | SL: ${pattern.stopLoss.toFixed(2)} | TP: ${pattern.takeProfit.toFixed(2)}</p>
-                    <div style="margin-top: 15px; display: flex; gap: 10px;">
-                        <button onclick="acceptSuggestion(${pattern.id})" style="padding: 8px 15px;" class="success">✅ ĐỒNG Ý</button>
-                        <button onclick="ignoreSuggestion(${pattern.id})" style="padding: 8px 15px;" class="danger">❌ BỎ QUA</button>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('suggestionsContainer').innerHTML = suggestionHTML;
-            playSound('suggestion');
-        }
-
-        function acceptSuggestion(patternId) {
-            const pattern = learnedPatterns.find(p => p.id === patternId);
-            if (!pattern) return;
-            
-            // Tạo trade dựa trên pattern
-            const trade = {
-                id: Date.now(),
-                action: pattern.action,
-                entryPrice: currentPrice,
-                stopLoss: pattern.stopLoss,
-                takeProfit: pattern.takeProfit,
-                lotSize: pattern.lotSize,
-                leverage: pattern.leverage,
-                status: 'OPEN',
-                openTime: new Date(),
-                type: 'SUGGESTION',
-                learnedPatternId: patternId
-            };
-            
-            currentTrades.push(trade);
-            updateTradeDisplay();
-            playSound('open');
-            
-            document.getElementById('suggestionsContainer').innerHTML = '';
-            showNotification(`✅ Đã vào lệnh ${pattern.action} theo đề xuất`, 'success');
-            
-            logTrade(`🤖 ${pattern.action} theo đề xuất @ ${currentPrice.toFixed(2)}`);
-            
-            saveData();
-        }
-
-        function ignoreSuggestion(patternId) {
-            document.getElementById('suggestionsContainer').innerHTML = '';
-            logTrade('Đã bỏ qua đề xuất giao dịch');
-        }
-
-        function executeAutoTrade(pattern, confidence) {
-            // Kiểm tra điều kiện auto-trade
-            if (!canAutoTrade()) return;
-            
-            // Kiểm tra không trùng lệnh
-            const hasSimilarTrade = currentTrades.some(t => 
-                t.status === 'OPEN' && 
-                t.action === pattern.action &&
-                Math.abs(t.entryPrice - currentPrice) < 2
-            );
-            
-            if (hasSimilarTrade) return;
-            
-            // Tạo trade
-            const trade = {
-                id: Date.now(),
-                action: pattern.action,
-                entryPrice: currentPrice,
-                stopLoss: pattern.stopLoss,
-                takeProfit: pattern.takeProfit,
-                lotSize: pattern.lotSize,
-                leverage: pattern.leverage,
-                status: 'OPEN',
-                openTime: new Date(),
-                type: 'AUTO',
-                learnedPatternId: pattern.id
-            };
-            
-            currentTrades.push(trade);
-            updateTradeDisplay();
-            playSound('open');
-            
-            logTrade(`🤖 AUTO ${pattern.action} @ ${currentPrice.toFixed(2)} (${confidence.toFixed(1)}% tin cậy)`);
-            
-            saveData();
-        }
-
-        function canAutoTrade() {
-            const minSamples = parseInt(document.getElementById('minSamples').value);
-            const completedPatterns = learnedPatterns.filter(p => p.outcome !== 'PENDING');
-            
-            if (completedPatterns.length < minSamples) return false;
-            
-            const wins = completedPatterns.filter(p => p.outcome === 'WIN').length;
-            const winRate = wins / completedPatterns.length;
-            
-            return winRate >= 0.6; // Cần ít nhất 60% win rate
-        }
-
-        function updatePatternOutcome(patternId, outcome, profit) {
-            const pattern = learnedPatterns.find(p => p.id === patternId);
-            if (pattern) {
-                pattern.outcome = outcome;
-                pattern.profit = profit;
-                pattern.closeTime = new Date();
-                updatePatternsDisplay();
-                updateLearningStats();
-            }
-        }
-
-        // ==================== UI UPDATES ====================
-        function updateAllDisplays() {
-            updateStatusBar();
-            updateTradeDisplay();
-            updatePatternsDisplay();
-            updateLearningStats();
-            updateChart();
-        }
-
-        function updateStatusBar() {
-            document.getElementById('balanceText').textContent = `$${virtualBalance.toFixed(2)}`;
-            document.getElementById('balanceText').className = virtualBalance >= 1000 ? 'status-value profit' : 'status-value loss';
-            document.getElementById('tradesCount').textContent = tradesToday;
-            document.getElementById('openTradesCount').textContent = currentTrades.filter(t => t.status === 'OPEN').length;
-            document.getElementById('patternsCount').textContent = learnedPatterns.length;
-            
-            // Update mode text
-            const modeText = document.getElementById('modeText');
-            switch(tradingMode) {
-                case 'manual': modeText.textContent = 'Thủ Công'; break;
-                case 'learning': modeText.textContent = 'Học Tập'; break;
-                case 'suggestion': modeText.textContent = 'Đề Xuất'; break;
-                case 'auto': modeText.textContent = 'Tự Động'; break;
-            }
-        }
-
-        function updateTradeDisplay() {
-            const container = document.getElementById('tradeBoxes');
-            const detailsContainer = document.getElementById('currentTradeDetails');
-            
-            if (currentTrades.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.7;">Không có lệnh nào đang mở</div>';
-                detailsContainer.style.display = 'none';
-                return;
-            }
-            
-            detailsContainer.style.display = 'block';
-            container.innerHTML = '';
-            
-            // Hiển thị các trade mới nhất trước
-            currentTrades.slice().reverse().forEach(trade => {
-                const profit = trade.status === 'OPEN' ? 
-                    calculateFloatingProfit(trade) : 
-                    trade.profit || 0;
-                
-                const profitClass = profit >= 0 ? 'profit' : 'loss';
-                const statusClass = trade.status === 'OPEN' ? '' : 'closed';
-                
-                const tradeBox = document.createElement('div');
-                tradeBox.className = `trade-box ${trade.action.toLowerCase()} ${statusClass}`;
-                tradeBox.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <h3 style="margin: 0;">${trade.action} ${trade.status === 'OPEN' ? '🟢' : '🔴'}</h3>
-                        <span class="badge ${trade.type === 'AUTO' ? 'info' : trade.type === 'SUGGESTION' ? 'warning' : 'success'}">
-                            ${trade.type}
-                        </span>
-                    </div>
-                    <p>📅 Vào: ${trade.openTime.toLocaleTimeString('vi-VN')}</p>
-                    <p>💰 Entry: ${trade.entryPrice.toFixed(2)}</p>
-                    <p>🎯 Hiện tại: ${currentPrice.toFixed(2)}</p>
-                    <p>📊 Lợi nhuận: <span class="${profitClass}">${profit.toFixed(2)} USD</span></p>
-                    <p>🛡️ SL: ${trade.stopLoss.toFixed(2)}</p>
-                    <p>🎯 TP: ${trade.takeProfit.toFixed(2)}</p>
-                    ${trade.status === 'CLOSED' ? 
-                        `<p>🔚 Lý do: ${trade.closeReason} @ ${trade.closePrice.toFixed(2)}</p>` : 
-                        `<p>⏱️ Thời gian: ${Math.floor((new Date() - trade.openTime) / 60000)} phút</p>`
-                    }
-                `;
-                
-                container.appendChild(tradeBox);
-            });
-        }
-
-        function calculateFloatingProfit(trade) {
-            if (trade.action === 'BUY') {
-                return (currentPrice - trade.entryPrice) * trade.lotSize * trade.leverage * 100;
-            } else {
-                return (trade.entryPrice - currentPrice) * trade.lotSize * trade.leverage * 100;
-            }
-        }
-
-        function updatePatternsDisplay() {
-            const container = document.getElementById('patternsList');
-            
-            if (learnedPatterns.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.7;">Chưa có mẫu hình nào được học</div>';
-                return;
-            }
-            
-            // Nhóm patterns theo type
-            const patternsByType = {};
-            learnedPatterns.forEach(pattern => {
-                const type = pattern.pattern.type;
-                if (!patternsByType[type]) patternsByType[type] = [];
-                patternsByType[type].push(pattern);
-            });
-            
-            let html = '';
-            for (const [type, patterns] of Object.entries(patternsByType)) {
-                const wins = patterns.filter(p => p.outcome === 'WIN').length;
-                const completed = patterns.filter(p => p.outcome !== 'PENDING').length;
-                const winRate = completed > 0 ? Math.round((wins / completed) * 100) : 0;
-                
-                html += `
-                    <div style="margin-bottom: 15px; padding: 10px; background: rgba(40, 40, 50, 0.5); border-radius: 8px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <strong>${PATTERN_TYPES[type]?.name || type}</strong>
-                            <span>${patterns.length} mẫu</span>
-                        </div>
-                        <div style="display: flex; gap: 10px; font-size: 0.9rem;">
-                            <span class="${winRate >= 60 ? 'profit' : 'loss'}">${winRate}% Win Rate</span>
-                            <span>${completed} đã hoàn thành</span>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            container.innerHTML = html;
-        }
-
-        function updateLearningStats() {
-            const total = learnedPatterns.length;
-            const completed = learnedPatterns.filter(p => p.outcome !== 'PENDING').length;
-            const wins = learnedPatterns.filter(p => p.outcome === 'WIN').length;
-            const winRate = completed > 0 ? Math.round((wins / completed) * 100) : 0;
-            
-            // Tính độ tin cậy trung bình
-            const avgConfidence = total > 0 ? 
-                Math.round(learnedPatterns.reduce((sum, p) => sum + (p.confidence || 50), 0) / total) : 0;
-            
-            document.getElementById('totalPatterns').textContent = total;
-            document.getElementById('winRate').textContent = `${winRate}% Win Rate`;
-            document.getElementById('avgConfidence').textContent = `${avgConfidence}% Tin cậy`;
-            
-            // Tìm pattern tốt nhất
-            if (completed > 0) {
-                const bestPattern = learnedPatterns.reduce((best, current) => {
-                    if (current.outcome === 'WIN') {
-                        const bestScore = best ? (best.confidence || 0) : 0;
-                        const currentScore = current.confidence || 0;
-                        return currentScore > bestScore ? current : best;
-                    }
-                    return best;
-                }, null);
-                
-                if (bestPattern) {
-                    document.getElementById('bestPattern').textContent = 
-                        `${PATTERN_TYPES[bestPattern.pattern.type]?.name || bestPattern.pattern.type}`;
-                    document.getElementById('bestPatternStats').textContent = 
-                        `Tỉ lệ thắng: ${Math.round(bestPattern.confidence || 0)}%`;
-                }
-            }
-            
-            // Update system status
-            const statusElement = document.getElementById('systemStatus');
-            const autoTradeStatus = document.getElementById('autoTradeStatus');
-            
-            if (tradingMode === 'auto') {
-                statusElement.textContent = canAutoTrade() ? '🟢 AUTO-TRADE SẴN SÀNG' : '🟡 ĐANG HỌC';
-                statusElement.style.color = canAutoTrade() ? '#2ecc71' : '#f39c12';
-                autoTradeStatus.style.display = 'block';
-            } else {
-                statusElement.textContent = '🟢 ĐANG HOẠT ĐỘNG';
-                statusElement.style.color = '#2ecc71';
-                autoTradeStatus.style.display = 'none';
-            }
-        }
-
-        // ==================== CHART FUNCTIONS ====================
+        // ==================== BIỂU ĐỒ ====================
         function initChart() {
             const ctx = document.getElementById('mainChart').getContext('2d');
-            
             mainChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: [],
-                    datasets: [
-                        {
-                            label: 'Số Dư (USD)',
-                            data: [],
-                            borderColor: '#2ecc71',
-                            backgroundColor: 'rgba(46, 204, 113, 0.1)',
-                            tension: 0.2,
-                            yAxisID: 'y-balance',
-                            borderWidth: 2
-                        },
-                        {
-                            label: 'Giá Vàng (USD)',
-                            data: [],
-                            borderColor: '#d4af37',
-                            backgroundColor: 'rgba(212, 175, 55, 0.1)',
-                            tension: 0.2,
-                            yAxisID: 'y-gold',
-                            borderWidth: 2
-                        }
-                    ]
+                    datasets: [{
+                        label: 'Giá Vàng (USD)',
+                        data: [],
+                        borderColor: '#d4af37',
+                        backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        pointRadius: 0
+                    }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            labels: { color: '#e6e6e6' }
-                        }
-                    },
+                    animation: false,
                     scales: {
-                        x: {
-                            ticks: { color: '#b0b0b0' },
-                            grid: { color: 'rgba(100, 100, 120, 0.2)' }
-                        },
-                        'y-balance': {
-                            type: 'linear',
-                            position: 'left',
-                            ticks: { color: '#2ecc71' },
-                            grid: { color: 'rgba(46, 204, 113, 0.1)' },
-                            title: {
-                                display: true,
-                                text: 'Số Dư (USD)',
-                                color: '#2ecc71'
-                            }
-                        },
-                        'y-gold': {
-                            type: 'linear',
-                            position: 'right',
-                            ticks: { color: '#d4af37' },
-                            grid: { drawOnChartArea: false },
-                            title: {
-                                display: true,
-                                text: 'Giá Vàng (USD)',
-                                color: '#d4af37'
-                            }
-                        }
-                    }
+                        x: { display: false },
+                        y: { position: 'right', grid: { color: 'rgba(100, 100, 100, 0.1)' }, ticks: { color: '#d4af37' } }
+                    },
+                    plugins: { legend: { display: false } }
                 }
             });
         }
 
         function updateChart() {
             if (!mainChart) return;
-            
-            // Update with recent data (last 50 points)
-            const recentBalance = balanceHistory.slice(-50);
-            const recentPrice = priceHistory.slice(-50);
-            
-            mainChart.data.labels = recentPrice.map((p, i) => 
-                p.timestamp.toLocaleTimeString('vi-VN').substring(0, 5)
-            );
-            mainChart.data.datasets[0].data = recentBalance.map(b => b.balance);
-            mainChart.data.datasets[1].data = recentPrice.map(p => p.price);
-            
-            mainChart.update('none');
-        }
-
-        function updateChartOnTrade(profit, action, reason) {
-            balanceHistory.push({
-                timestamp: new Date(),
-                balance: virtualBalance,
-                profit: profit,
-                action: action,
-                reason: reason
-            });
-            
-            if (balanceHistory.length > 100) balanceHistory.shift();
-            updateChart();
-        }
-
-        function toggleChartType() {
-            if (!mainChart) return;
-            
-            const newType = mainChart.config.type === 'line' ? 'bar' : 'line';
-            mainChart.config.type = newType;
-            mainChart.update();
-            
-            showNotification(`📊 Đã đổi sang biểu đồ ${newType === 'line' ? 'đường' : 'cột'}`, 'success');
-        }
-
-        // ==================== UTILITY FUNCTIONS ====================
-        function logTrade(message) {
-            const historyList = document.getElementById('historyList');
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('vi-VN');
-            
-            const item = document.createElement('div');
-            item.className = 'history-item';
-            item.innerHTML = `<strong>${timeStr}:</strong> ${message}`;
-            
-            historyList.insertBefore(item, historyList.firstChild);
-            
-            if (historyList.children.length > 50) {
-                historyList.removeChild(historyList.lastChild);
-            }
-        }
-
-        function showNotification(message, type = 'info') {
-            logTrade(message);
-            
-            // Create toast notification
-            const toast = document.createElement('div');
-            toast.className = `notification ${type}`;
-            toast.textContent = message;
-            toast.style.position = 'fixed';
-            toast.style.top = '20px';
-            toast.style.left = '50%';
-            toast.style.transform = 'translateX(-50%)';
-            toast.style.zIndex = '1000';
-            toast.style.maxWidth = '80%';
-            
-            document.body.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.remove();
-            }, 5000);
-        }
-
-        function playSound(soundName) {
-            if (useGlobalSound) return;
-            
-            const sound = sounds[soundName];
-            if (sound) {
-                sound.currentTime = 0;
-                sound.volume = soundVolume / 100;
-                sound.play().catch(e => console.log('Không thể phát âm thanh:', e));
-            }
-        }
-
-        function setupEventListeners() {
-            // Confidence slider
-            const confidenceSlider = document.getElementById('minConfidence');
-            const confidenceValue = document.getElementById('confidenceValue');
-            confidenceSlider.addEventListener('input', function() {
-                confidenceValue.textContent = this.value + '%';
-            });
-            
-            // Volume slider
-            const volumeSlider = document.getElementById('soundVolume');
-            const volumeValue = document.getElementById('volumeValue');
-            volumeSlider.addEventListener('input', function() {
-                soundVolume = this.value;
-                volumeValue.textContent = soundVolume + '%';
-                Object.values(sounds).forEach(sound => {
-                    sound.volume = soundVolume / 100;
-                });
-            });
-            
-            // Balance input
-            document.getElementById('virtualBalance').addEventListener('change', function() {
-                virtualBalance = parseFloat(this.value);
-                updateStatusBar();
-            });
-        }
-
-        function startIntervals() {
-            // Kiểm tra trade mỗi giây
-            setInterval(checkOpenTrades, 1000);
-            
-            // Kiểm tra cơ hội giao dịch mỗi 30 giây
-            setInterval(checkTradingOpportunities, 30000);
-            
-            // Tự động save mỗi phút
-            setInterval(saveData, 60000);
-        }
-
-        // ==================== DATA MANAGEMENT ====================
-        function analyzeMyStrategy() {
-            if (learnedPatterns.length === 0) {
-                showNotification('📊 Chưa có dữ liệu để phân tích', 'warning');
-                return;
-            }
-            
-            const completed = learnedPatterns.filter(p => p.outcome !== 'PENDING');
-            const wins = completed.filter(p => p.outcome === 'WIN').length;
-            const winRate = completed.length > 0 ? (wins / completed.length * 100).toFixed(1) : 0;
-            
-            // Phân tích theo pattern type
-            const patternAnalysis = {};
-            completed.forEach(pattern => {
-                const type = pattern.pattern.type;
-                if (!patternAnalysis[type]) {
-                    patternAnalysis[type] = { total: 0, wins: 0, totalProfit: 0 };
-                }
-                patternAnalysis[type].total++;
-                if (pattern.outcome === 'WIN') patternAnalysis[type].wins++;
-                patternAnalysis[type].totalProfit += pattern.profit || 0;
-            });
-            
-            let analysis = `📊 PHÂN TÍCH CHIẾN LƯỢC\n`;
-            analysis += `========================\n`;
-            analysis += `• Tổng mẫu: ${learnedPatterns.length}\n`;
-            analysis += `• Đã hoàn thành: ${completed.length}\n`;
-            analysis += `• Win rate tổng: ${winRate}%\n\n`;
-            analysis += `📈 PHÂN TÍCH THEO LOẠI:\n`;
-            
-            for (const [type, stats] of Object.entries(patternAnalysis)) {
-                const typeWinRate = (stats.wins / stats.total * 100).toFixed(1);
-                const avgProfit = (stats.totalProfit / stats.total).toFixed(2);
-                analysis += `\n${PATTERN_TYPES[type]?.name || type}:\n`;
-                analysis += `  • Số lệnh: ${stats.total}\n`;
-                analysis += `  • Win rate: ${typeWinRate}%\n`;
-                analysis += `  • Lợi nhuận TB: ${avgProfit} USD\n`;
-            }
-            
-            alert(analysis);
-            showNotification('📊 Đã phân tích chiến lược thành công', 'success');
-        }
-
-        function exportLearningData() {
-            if (learnedPatterns.length === 0) {
-                showNotification('⚠️ Không có dữ liệu để xuất', 'error');
-                return;
-            }
-            
-            const data = JSON.stringify(learnedPatterns, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `trading_data_${new Date().toISOString().slice(0, 10)}.json`;
-            a.click();
-            
-            showNotification('💾 Đã xuất dữ liệu học tập', 'success');
-        }
-
-        function exportTradeHistory() {
-            const history = balanceHistory.map(item => ({
-                time: item.timestamp.toISOString(),
-                balance: item.balance,
-                profit: item.profit,
-                action: item.action,
-                reason: item.reason
-            }));
-            
-            if (history.length === 0) {
-                showNotification('⚠️ Không có lịch sử giao dịch', 'error');
-                return;
-            }
-            
-            const csv = [
-                ['Thời Gian', 'Số Dư', 'Lợi Nhuận', 'Loại Lệnh', 'Lý Do'],
-                ...history.map(h => [h.time, h.balance, h.profit, h.action, h.reason])
-            ].map(row => row.join(',')).join('\n');
-            
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `trade_history_${new Date().toISOString().slice(0, 10)}.csv`;
-            a.click();
-            
-            showNotification('💾 Đã xuất lịch sử giao dịch', 'success');
-        }
-
-        function clearLearningData() {
-            if (!confirm('Bạn có chắc muốn xóa TẤT CẢ dữ liệu học tập? Hành động này không thể hoàn tác.')) {
-                return;
-            }
-            
-            learnedPatterns = [];
-            localStorage.removeItem('learnedPatterns');
-            updatePatternsDisplay();
-            updateLearningStats();
-            
-            showNotification('🗑️ Đã xóa toàn bộ dữ liệu học tập', 'success');
-        }
-
-        function clearTradeHistory() {
-            if (!confirm('Xóa lịch sử giao dịch?')) return;
-            
-            document.getElementById('historyList').innerHTML = '';
-            balanceHistory = [];
-            showNotification('🧹 Đã xóa lịch sử giao dịch', 'success');
-        }
-
-        function resetAll() {
-            if (!confirm('RESET TOÀN BỘ HỆ THỐNG?\n\nTất cả dữ liệu sẽ bị xóa và hệ thống sẽ trở về trạng thái ban đầu.')) {
-                return;
-            }
-            
-            virtualBalance = 1000;
-            tradesToday = 0;
-            currentTrades = [];
-            learnedPatterns = [];
-            priceHistory = [];
-            balanceHistory = [];
-            
-            localStorage.clear();
-            
-            document.getElementById('virtualBalance').value = 1000;
-            document.getElementById('lotSize').value = 0.1;
-            document.getElementById('leverage').value = 10;
-            document.getElementById('stopLoss').value = 50;
-            document.getElementById('takeProfit').value = 65;
-            document.getElementById('tradingMode').value = 'manual';
-            
-            updateAllDisplays();
-            showNotification('🔄 Đã reset toàn bộ hệ thống', 'success');
-        }
-
-        // ==================== PRICE ALERTS ====================
-        function setupPriceAlerts() {
-            const input = document.getElementById('alertPrices').value;
-            if (!input.trim()) {
-                showNotification('⚠️ Vui lòng nhập các mốc giá', 'error');
-                return;
-            }
-            
-            alertLevels = input.split(',')
-                .map(p => parseFloat(p.trim()))
-                .filter(p => !isNaN(p) && p > 0);
-            
-            alertedLevels.clear();
-            
-            // Update alerts list
-            const alertsList = document.getElementById('alertsList');
-            alertsList.innerHTML = alertLevels.map(level => `
-                <div style="padding: 8px; margin: 5px 0; background: rgba(52, 152, 219, 0.1); border-radius: 6px;">
-                    🔔 ${level.toFixed(2)} USD
-                </div>
-            `).join('');
-            
-            showNotification(`✅ Đã thiết lập ${alertLevels.length} mốc cảnh báo`, 'success');
-        }
-
-        function checkPriceAlerts(currentPrice) {
-            if (alertLevels.length === 0) return;
-            
-            alertLevels.forEach(level => {
-                if (alertedLevels.has(level)) return;
-                
-                if (Math.abs(currentPrice - level) < 0.5) {
-                    alertedLevels.add(level);
-                    playSound('alert');
-                    showNotification(`📢 Giá đã chạm mốc ${level.toFixed(2)} USD!`, 'warning');
-                }
-            });
-        }
-
-        function clearAlerts() {
-            alertLevels = [];
-            alertedLevels.clear();
-            document.getElementById('alertsList').innerHTML = '';
-            document.getElementById('alertPrices').value = '';
-            showNotification('🗑️ Đã xóa tất cả cảnh báo', 'success');
-        }
-
-        // ==================== SOUND SETTINGS ====================
-        function saveSoundSettings() {
-            useGlobalSound = document.getElementById('useGlobalSound').checked;
-            soundVolume = parseInt(document.getElementById('soundVolume').value);
-            
-            // Save sound files if selected
-            const soundInputs = ['openSoundInput', 'tpSoundInput', 'slSoundInput', 'suggestionSoundInput', 'alertSoundInput'];
-            soundInputs.forEach(inputId => {
-                const input = document.getElementById(inputId);
-                if (input.files.length > 0) {
-                    const soundName = inputId.replace('SoundInput', '');
-                    sounds[soundName] = new Audio(URL.createObjectURL(input.files[0]));
-                }
-            });
-            
-            saveData();
-            showNotification('🔊 Đã lưu cài đặt âm thanh', 'success');
-        }
-
-        function testAllSounds() {
-            Object.entries(sounds).forEach(([name, sound], index) => {
-                setTimeout(() => {
-                    playSound(name);
-                    showNotification(`▶️ Đang phát: ${name}`, 'info');
-                }, index * 1000);
-            });
-        }
-
-        function resetSoundSettings() {
-            if (!confirm('Reset cài đặt âm thanh về mặc định?')) return;
-            
-            // Reset to default sounds
-            sounds = {
-                open: new Audio('https://assets.mixkit.co/active_storage/sfx/286/286-preview.mp3'),
-                tp: new Audio('https://assets.mixkit.co/active_storage/sfx/257/257-preview.mp3'),
-                sl: new Audio('https://assets.mixkit.co/active_storage/sfx/255/255-preview.mp3'),
-                suggestion: new Audio('https://assets.mixkit.co/active_storage/sfx/286/286-preview.mp3'),
-                alert: new Audio('https://assets.mixkit.co/active_storage/sfx/250/250-preview.mp3')
-            };
-            
-            useGlobalSound = false;
-            soundVolume = 50;
-            
-            document.getElementById('useGlobalSound').checked = false;
-            document.getElementById('soundVolume').value = 50;
-            document.getElementById('volumeValue').textContent = '50%';
-            
-            // Clear file inputs
-            const soundInputs = ['openSoundInput', 'tpSoundInput', 'slSoundInput', 'suggestionSoundInput', 'alertSoundInput'];
-            soundInputs.forEach(id => {
-                document.getElementById(id).value = '';
-            });
-            
-            showNotification('🔊 Đã reset cài đặt âm thanh', 'success');
-        }
-
-        // ==================== MODAL FUNCTIONS ====================
-        function showAdvancedSettings() {
-            document.getElementById('advancedSettingsModal').style.display = 'flex';
-        }
-
-        function closeAdvancedSettings() {
-            document.getElementById('advancedSettingsModal').style.display = 'none';
-        }
-
-        function saveAdvancedSettings() {
-            // Save advanced settings here
-            closeAdvancedSettings();
-            showNotification('⚙️ Đã lưu cài đặt nâng cao', 'success');
-        }
-
-        function showChartSettings() {
-            alert('Cài đặt biểu đồ:\n\n• Đang sử dụng dữ liệu thời gian thực\n• Tự động cập nhật mỗi khi có giá mới\n• Hiển thị 50 điểm dữ liệu gần nhất');
-        }
-
-        function updateChartData() {
-            updateChart();
-            showNotification('🔄 Đã cập nhật dữ liệu biểu đồ', 'success');
+            const recentData = priceHistory.slice(-100); // Chỉ vẽ 100 điểm gần nhất
+            mainChart.data.labels = recentData.map(p => new Date(p.timestamp).toLocaleTimeString());
+            mainChart.data.datasets[0].data = recentData.map(p => p.price);
+            mainChart.update('none'); // Update mode 'none' để mượt mà
         }
 
         function clearChart() {
-            if (!confirm('Xóa dữ liệu biểu đồ?')) return;
-            
-            balanceHistory = [];
-            updateChart();
-            showNotification('🗑️ Đã xóa dữ liệu biểu đồ', 'success');
+            priceHistory = [];
+            mainChart.data.labels = [];
+            mainChart.data.datasets[0].data = [];
+            mainChart.update();
+            showNotification('Đã xóa dữ liệu biểu đồ', 'info');
         }
 
-        // ==================== INITIALIZE ====================
+        // ==================== TIỆN ÍCH ====================
+        function logToHistory(msg) {
+            const list = document.getElementById('historyList');
+            const time = new Date().toLocaleTimeString();
+            const item = document.createElement('div');
+            item.className = 'history-item';
+            item.innerHTML = `<span style="color:#d4af37">[${time}]</span> ${msg}`;
+            list.insertBefore(item, list.firstChild);
+        }
+
+        function showNotification(msg, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `notification ${type}`;
+            toast.textContent = msg;
+            toast.style.position = 'fixed'; toast.style.top = '20px'; toast.style.right = '20px'; toast.style.zIndex = '9999';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
         window.onload = initializeSystem;
-        
-        // Auto-save khi đóng tab
-        window.addEventListener('beforeunload', saveData);
-        
-        // Prevent accidental page reload
-        window.addEventListener('beforeunload', (e) => {
-            if (currentTrades.some(t => t.status === 'OPEN')) {
-                e.preventDefault();
-                e.returnValue = 'Bạn có lệnh đang mở. Bạn có chắc muốn thoát?';
-                return e.returnValue;
-            }
-        });
     </script>
 </body>
 </html>
