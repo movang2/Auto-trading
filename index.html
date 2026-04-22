@@ -67,6 +67,7 @@
             color: #fff; transition: all 0.3s ease;
         }
         input:focus, select:focus { outline: none; border-color: #d4af37; }
+        input[type="number"] { width: 120px; }
         button {
             background: linear-gradient(45deg, #d4af37, #b8941f); color: #1a1a2e;
             border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer;
@@ -200,6 +201,29 @@
         .sound-control input {
             flex: 1;
         }
+        
+        /* Anti-spam settings row */
+        .anti-spam-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .anti-spam-row label {
+            width: auto;
+            margin: 0;
+        }
+        .anti-spam-row input {
+            width: 100px;
+        }
+        .anti-spam-row small {
+            color: #888;
+            font-size: 0.8rem;
+        }
     </style>
 </head>
 <body>
@@ -218,7 +242,7 @@
             <div id="priceChange" style="font-size: 1.5rem; opacity: 0.9;">Đang cập nhật...</div>
         </div>
 
-        <!-- PHẦN SPIKE ALERT -->
+        <!-- PHẦN SPIKE ALERT (CÓ THÊM CÀI ĐẶT CHỐNG SPAM) -->
         <div class="panel" style="border-left: 5px solid #f1c40f;">
             <div class="panel-title">⚡ CẢNH BÁO BIẾN ĐỘNG MẠNH (SPIKE)</div>
             
@@ -227,6 +251,14 @@
                     <div class="control-group">
                         <label for="spikeThreshold">🔔 Ngưỡng biến động giá (USD):</label>
                         <input type="number" id="spikeThreshold" value="4.0" min="0.5" step="0.5" style="font-weight: bold; color: #f1c40f;">
+                    </div>
+                    
+                    <!-- CÀI ĐẶT CHỐNG SPAM CHO SPIKE -->
+                    <div class="anti-spam-row">
+                        <label>⏱️ Giới hạn cảnh báo Spike (giây):</label>
+                        <input type="number" id="spikeCooldown" value="5" min="1" max="300" step="1">
+                        <small>1 lần / N giây</small>
+                        <button onclick="saveSpikeCooldown()" class="info small" style="padding: 6px 12px; margin: 0;">💾 Lưu</button>
                     </div>
                     
                     <div class="control-group">
@@ -251,9 +283,17 @@
             </div>
         </div>
 
-        <!-- PHẦN PRESET MONITORS MỚI (GÁN TỪ FILE HTML ĐẦU) -->
+        <!-- PHẦN PRESET MONITORS -->
         <div class="panel">
             <div class="panel-title">🎯 CẢNH BÁO CHỈ BÁO & PRESET MONITORS</div>
+            
+            <!-- CÀI ĐẶT CHỐNG SPAM CHO CHỈ BÁO -->
+            <div class="anti-spam-row" style="margin-bottom: 20px;">
+                <label>⏱️ Giới hạn cảnh báo chỉ báo (giây):</label>
+                <input type="number" id="indicatorCooldown" value="30" min="1" max="300" step="1">
+                <small>1 lần / N giây</small>
+                <button onclick="saveIndicatorCooldown()" class="info small" style="padding: 6px 12px; margin: 0;">💾 Lưu</button>
+            </div>
             
             <!-- CHUYỂN ĐỔI NHANH -->
             <div style="margin-bottom: 20px;">
@@ -381,6 +421,7 @@
 
         <div style="margin-top: 30px; padding: 20px; background: rgba(30, 30, 40, 0.6); border-radius: 12px; text-align: center; font-size: 0.9rem; opacity: 0.8;">
             <p>🚀 <strong>HỆ THỐNG CẢNH BÁO GOLD SPIKE + PRESET MONITORS</strong> | Version 2.0 | © 2026</p>
+            <p>⚙️ Có thể điều chỉnh thời gian chống spam (giới hạn cảnh báo) cho từng loại</p>
         </div>
     </div>
 
@@ -399,6 +440,7 @@
         let spikeThreshold = 4.0;
         let spikeSound = new Audio('https://assets.mixkit.co/active_storage/sfx/250/250-preview.mp3');
         let lastSpikeAlertTime = 0;
+        let spikeCooldownSeconds = 5;  // THÊM: thời gian chống spam cho Spike (giây)
         
         // Biến cho preset monitors
         let presetMonitors = {
@@ -419,6 +461,7 @@
         
         let indicatorAlertSound = null;
         let lastIndicatorAlertTime = 0;
+        let indicatorCooldownSeconds = 30;  // THÊM: thời gian chống spam cho chỉ báo (giây)
         
         // Giá trị indicators hiện tại
         let currentEMA20 = 0;
@@ -435,6 +478,20 @@
             if(savedThreshold) {
                 document.getElementById('spikeThreshold').value = savedThreshold;
                 spikeThreshold = parseFloat(savedThreshold);
+            }
+            
+            // Load Spike Cooldown
+            const savedSpikeCooldown = localStorage.getItem('spikeCooldownSeconds');
+            if(savedSpikeCooldown) {
+                spikeCooldownSeconds = parseInt(savedSpikeCooldown);
+                document.getElementById('spikeCooldown').value = spikeCooldownSeconds;
+            }
+            
+            // Load Indicator Cooldown
+            const savedIndicatorCooldown = localStorage.getItem('indicatorCooldownSeconds');
+            if(savedIndicatorCooldown) {
+                indicatorCooldownSeconds = parseInt(savedIndicatorCooldown);
+                document.getElementById('indicatorCooldown').value = indicatorCooldownSeconds;
             }
             
             // Load preset monitors
@@ -483,6 +540,30 @@
             showNotification('🚀 Hệ thống theo dõi Gold Spike + Preset Monitors đã sẵn sàng!', 'success');
         }
         
+        // Hàm lưu thời gian chống spam cho Spike
+        function saveSpikeCooldown() {
+            const newCooldown = parseInt(document.getElementById('spikeCooldown').value);
+            if (newCooldown >= 1 && newCooldown <= 300) {
+                spikeCooldownSeconds = newCooldown;
+                localStorage.setItem('spikeCooldownSeconds', spikeCooldownSeconds);
+                showNotification(`✅ Đã lưu: Cảnh báo Spike tối đa 1 lần/${spikeCooldownSeconds} giây`, 'success');
+            } else {
+                showNotification('⚠️ Vui lòng nhập số giây từ 1 đến 300', 'error');
+            }
+        }
+        
+        // Hàm lưu thời gian chống spam cho chỉ báo
+        function saveIndicatorCooldown() {
+            const newCooldown = parseInt(document.getElementById('indicatorCooldown').value);
+            if (newCooldown >= 1 && newCooldown <= 300) {
+                indicatorCooldownSeconds = newCooldown;
+                localStorage.setItem('indicatorCooldownSeconds', indicatorCooldownSeconds);
+                showNotification(`✅ Đã lưu: Cảnh báo chỉ báo tối đa 1 lần/${indicatorCooldownSeconds} giây`, 'success');
+            } else {
+                showNotification('⚠️ Vui lòng nhập số giây từ 1 đến 300', 'error');
+            }
+        }
+        
         function updateIndicatorUI() {
             document.getElementById('ema20Enable').checked = indicatorAlerts.ema20.enabled;
             document.getElementById('ema20Operator').value = indicatorAlerts.ema20.operator;
@@ -505,7 +586,7 @@
                 btn.innerHTML = '🛑 TẮT CẢNH BÁO SPIKE';
                 btn.classList.remove('warning');
                 btn.classList.add('danger');
-                status.textContent = 'Đang kích hoạt: Sẽ báo động nếu giá chạy > ' + spikeThreshold + ' USD';
+                status.textContent = `Đang kích hoạt: Sẽ báo động nếu giá chạy > ${spikeThreshold} USD (tối đa 1 lần/${spikeCooldownSeconds}s)`;
                 status.style.color = '#e74c3c';
                 showNotification('Đã BẬT cảnh báo biến động', 'success');
             } else {
@@ -561,17 +642,17 @@
             priceHistory.push({ timestamp: now, price: newPrice });
             if (priceHistory.length > 1000) priceHistory.shift();
 
-            // 3. Tính toán biến động (Spike)
+            // 3. Tính toán biến động (Spike) - SỬ DỤNG spikeCooldownSeconds
             checkVolatility(now);
-
+            
             // 4. Cập nhật chỉ báo & biểu đồ
             updateIndicators();
             updateChart();
             
-            // 5. Kiểm tra preset monitors (QUAN TRỌNG)
+            // 5. Kiểm tra preset monitors
             checkPresetMonitors();
             
-            // 6. Kiểm tra cảnh báo chỉ báo thủ công
+            // 6. Kiểm tra cảnh báo chỉ báo thủ công - SỬ DỤNG indicatorCooldownSeconds
             checkIndicatorAlerts();
         }
 
@@ -592,7 +673,7 @@
             }
         }
 
-        // ==================== LOGIC SPIKE ====================
+        // ==================== LOGIC SPIKE (ĐÃ CẬP NHẬT COOLDOWN) ====================
         function checkVolatility(currentTime) {
             const oneMinAgo = currentTime - 60000;
             let pastPriceObj = priceHistory.find(p => p.timestamp >= oneMinAgo);
@@ -611,11 +692,14 @@
                 volEl.textContent = diff.toFixed(2) + ' USD';
                 statusVolEl.textContent = diff.toFixed(2);
                 
+                // SỬ DỤNG spikeCooldownSeconds (chuyển từ giây sang milliseconds)
+                const cooldownMs = spikeCooldownSeconds * 1000;
+                
                 if (diff >= spikeThreshold) {
                     volEl.style.color = '#e74c3c';
                     volEl.style.textShadow = '0 0 15px rgba(231, 76, 60, 0.5)';
                     
-                    if (spikeEnabled && (currentTime - lastSpikeAlertTime > 5000)) {
+                    if (spikeEnabled && (currentTime - lastSpikeAlertTime >= cooldownMs)) {
                         triggerSpikeAlert(diff, currentPrice > pastPrice ? 'TĂNG' : 'GIẢM');
                         lastSpikeAlertTime = currentTime;
                     }
@@ -630,24 +714,22 @@
             spikeSound.currentTime = 0;
             spikeSound.play().catch(e => console.log('Không thể phát âm thanh'));
             
-            const msg = `⚡ SPIKE ALERT: Giá ${direction} mạnh ${diff.toFixed(2)} USD trong 1 phút!`;
+            const msg = `⚡ SPIKE ALERT: Giá ${direction} mạnh ${diff.toFixed(2)} USD trong 1 phút! (chống spam ${spikeCooldownSeconds}s)`;
             showNotification(msg, 'warning');
             logToHistory(msg);
         }
 
-        // ==================== CHỈ BÁO KỸ THUẬT (ĐÃ SỬA LỖI EMA) ====================
+        // ==================== CHỈ BÁO KỸ THUẬT ====================
         function updateIndicators() {
             if (priceHistory.length < 50) return;
             
             const prices = priceHistory.map(p => p.price);
             
-            // Tính EMA20 và EMA50
             currentEMA20 = calculateEMA(prices, 20);
             currentEMA50 = calculateEMA(prices, 50);
             document.getElementById('ema20Value').textContent = currentEMA20.toFixed(2);
             document.getElementById('ema50Value').textContent = currentEMA50.toFixed(2);
             
-            // Cập nhật trạng thái EMA
             const ema20Status = document.getElementById('ema20Status');
             ema20Status.textContent = currentPrice > currentEMA20 ? 'Trên EMA20' : 'Dưới EMA20';
             ema20Status.style.color = currentPrice > currentEMA20 ? '#2ecc71' : '#e74c3c';
@@ -656,14 +738,12 @@
             ema50Status.textContent = currentPrice > currentEMA50 ? 'Trên EMA50' : 'Dưới EMA50';
             ema50Status.style.color = currentPrice > currentEMA50 ? '#2ecc71' : '#e74c3c';
             
-            // Tính RSI
             currentRSI = calculateRSI(prices, 14);
             const rsiEl = document.getElementById('rsiValue');
             rsiEl.textContent = currentRSI.toFixed(2);
             rsiEl.style.color = currentRSI > 70 ? '#e74c3c' : (currentRSI < 30 ? '#2ecc71' : '#fff');
             document.getElementById('rsiStatus').textContent = currentRSI > 70 ? 'QUÁ MUA' : (currentRSI < 30 ? 'QUÁ BÁN' : 'Trung tính');
             
-            // Tính MACD
             const ema12 = calculateEMA(prices, 12);
             const ema26 = calculateEMA(prices, 26);
             currentMACD = ema12 - ema26;
@@ -694,7 +774,7 @@
             return 100 - (100 / (1 + (gains / losses)));
         }
 
-        // ==================== PRESET MONITORS (GÁN TỪ FILE HTML ĐẦU) ====================
+        // ==================== PRESET MONITORS ====================
         function togglePresetMonitor(presetName) {
             const checkbox = document.getElementById(`monitor${presetName}`);
             presetMonitors[presetName].enabled = checkbox.checked;
@@ -710,11 +790,13 @@
 
         function checkPresetMonitors() {
             const now = Date.now();
+            // Preset monitors dùng cooldown mặc định 60 giây (có thể tùy chỉnh riêng nếu muốn)
+            const presetCooldownMs = 60000;
             
             Object.keys(presetMonitors).forEach(presetName => {
                 const monitor = presetMonitors[presetName];
                 
-                if (monitor.enabled && (now - monitor.lastAlertTime > 60000)) {
+                if (monitor.enabled && (now - monitor.lastAlertTime >= presetCooldownMs)) {
                     if (checkPresetConditions(presetName)) {
                         triggerPresetAlert(presetName);
                         monitor.lastAlertTime = now;
@@ -763,7 +845,7 @@
             logToHistory(`[PRESET] ${message}`);
         }
 
-        // ==================== CẢNH BÁO CHỈ BÁO THỦ CÔNG ====================
+        // ==================== CẢNH BÁO CHỈ BÁO THỦ CÔNG (ĐÃ CẬP NHẬT COOLDOWN) ====================
         function saveIndicatorAlerts() {
             indicatorAlerts.ema20.enabled = document.getElementById('ema20Enable').checked;
             indicatorAlerts.ema20.operator = document.getElementById('ema20Operator').value;
@@ -782,7 +864,10 @@
 
         function checkIndicatorAlerts() {
             const now = Date.now();
-            if (now - lastIndicatorAlertTime < 30000) return;
+            // SỬ DỤNG indicatorCooldownSeconds (chuyển từ giây sang milliseconds)
+            const cooldownMs = indicatorCooldownSeconds * 1000;
+            
+            if (now - lastIndicatorAlertTime < cooldownMs) return;
             
             const enabledAlerts = Object.keys(indicatorAlerts).filter(key => indicatorAlerts[key].enabled);
             if (enabledAlerts.length === 0) return;
@@ -819,7 +904,7 @@
             
             if (allConditionsMet) {
                 lastIndicatorAlertTime = now;
-                showNotification('🔔 Cảnh báo chỉ báo: Tất cả điều kiện đã đạt!', 'warning');
+                showNotification(`🔔 Cảnh báo chỉ báo: Tất cả điều kiện đã đạt! (chống spam ${indicatorCooldownSeconds}s)`, 'warning');
                 
                 if (indicatorAlertSound) {
                     indicatorAlertSound.volume = 0.5;
@@ -828,7 +913,7 @@
                     spikeSound.currentTime = 0;
                     spikeSound.play();
                 }
-                logToHistory('[INDICATOR] Tất cả điều kiện chỉ báo đã đạt!');
+                logToHistory(`[INDICATOR] Tất cả điều kiện chỉ báo đã đạt! (chống spam ${indicatorCooldownSeconds}s)`);
             }
         }
 
@@ -964,7 +1049,6 @@
             item.innerHTML = `<span style="color:#d4af37">[${time}]</span> ${msg}`;
             list.insertBefore(item, list.firstChild);
             
-            // Giới hạn số lượng
             while (list.children.length > 100) {
                 list.removeChild(list.lastChild);
             }
@@ -994,4 +1078,4 @@
         });
     </script>
 </body>
-    </html>
+</html>
