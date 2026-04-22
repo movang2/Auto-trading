@@ -95,7 +95,6 @@
         }
         .status-value { font-weight: bold; padding: 4px 10px; border-radius: 6px; background: rgba(255, 255, 255, 0.1); }
         
-        /* Animation classes */
         @keyframes pricePulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         .price-up { animation: pricePulse 0.5s ease; color: #2ecc71 !important; }
         .price-down { animation: pricePulse 0.5s ease; color: #e74c3c !important; }
@@ -110,14 +109,12 @@
         .notification.warning { background: rgba(241, 196, 15, 0.1); border-left-color: #f1c40f; }
         .notification.success { background: rgba(46, 204, 113, 0.1); border-left-color: #2ecc71; }
         
-        /* Stat Cards for Indicators */
         .stat-card {
             background: rgba(25, 25, 35, 0.8); padding: 15px; border-radius: 10px;
             border: 1px solid rgba(100, 100, 120, 0.3); text-align: center;
         }
         .stat-value { font-size: 1.5rem; font-weight: bold; margin: 10px 0; color: #fff; }
         
-        /* Volatility Display */
         .volatility-box {
             background: rgba(0, 0, 0, 0.3);
             border-radius: 10px;
@@ -133,7 +130,6 @@
             text-shadow: 0 0 10px rgba(241, 196, 15, 0.3);
         }
 
-        /* Spike Marker Display */
         .spike-marker-box {
             background: rgba(0, 0, 0, 0.4);
             border-radius: 10px;
@@ -153,7 +149,6 @@
             margin-top: 5px;
         }
 
-        /* History List */
         #historyList {
             max-height: 300px; overflow-y: auto;
             border: 1px solid rgba(100, 100, 120, 0.3);
@@ -164,7 +159,6 @@
             font-size: 0.9rem;
         }
         
-        /* Preset Controls */
         .preset-controls, .indicator-alert-group {
             background: rgba(20, 20, 30, 0.8); padding: 15px; border-radius: 10px; margin-bottom: 15px;
         }
@@ -234,9 +228,7 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        .toggle-switch input:checked {
-            background: #d4af37;
-        }
+        .toggle-switch input:checked { background: #d4af37; }
         .toggle-switch input::before {
             content: '';
             position: absolute;
@@ -248,14 +240,18 @@
             left: 2px;
             transition: transform 0.3s;
         }
-        .toggle-switch input:checked::before {
-            transform: translateX(20px);
+        .toggle-switch input:checked::before { transform: translateX(20px); }
+        
+        .tts-test-btn {
+            background: linear-gradient(45deg, #9b59b6, #8e44ad);
+            color: white;
         }
+        .tts-test-btn:hover { background: linear-gradient(45deg, #af7ac5, #9b59b6); }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🚀 GOLD SPIKE ALERT SYSTEM + PRESET MONITORS</h1>
+        <h1>🚀 GOLD SPIKE ALERT SYSTEM + TTS VIỆT</h1>
         
         <div class="status-bar">
             <div class="status-item">📡 Kết nối: <span id="connectionStatus" class="status-value" style="color:#2ecc71">Đã kết nối</span></div>
@@ -269,7 +265,7 @@
             <div id="priceChange" style="font-size: 1.5rem; opacity: 0.9;">Đang cập nhật...</div>
         </div>
 
-        <!-- PHẦN SPIKE ALERT (ĐÃ THÊM TÍNH NĂNG ĐÁNH DẤU MỐC) -->
+        <!-- PHẦN SPIKE ALERT -->
         <div class="panel" style="border-left: 5px solid #f1c40f;">
             <div class="panel-title">⚡ CẢNH BÁO BIẾN ĐỘNG MẠNH (SPIKE)</div>
             
@@ -304,6 +300,11 @@
                         <input type="file" id="spikeSoundInput" accept="audio/*">
                     </div>
                     
+                    <div class="control-group">
+                        <label>🔊 Kiểm tra TTS "Nó bịp kìa":</label>
+                        <button onclick="testTTS()" class="tts-test-btn" style="margin: 0;">🎤 KIỂM TRA TTS</button>
+                    </div>
+                    
                     <div style="margin-top: 20px;">
                         <button id="btnToggleSpike" onclick="toggleSpikeAlert()" class="warning" style="width: 100%; justify-content: center; padding: 15px;">
                             🛡️ BẬT CẢNH BÁO SPIKE
@@ -318,11 +319,10 @@
                         <div id="spikeStatusText" style="margin-top: 10px; font-size: 0.9rem; color: #2ecc71;">Đang theo dõi...</div>
                     </div>
                     
-                    <!-- Hiển thị mốc Spike đã đánh dấu -->
                     <div class="spike-marker-box" id="spikeMarkerBox" style="display: none;">
                         <div style="color: #d4af37; margin-bottom: 5px;">📌 MỐC SPIKE HIỆN TẠI</div>
                         <div id="spikeMarkerValue" class="spike-marker-value">0.00 USD</div>
-                        <div id="spikeMarkerTarget" class="spike-marker-info">Chờ tăng/giảm 2.0 USD để báo tiếp</div>
+                        <div id="spikeMarkerTarget" class="spike-marker-info">Chờ tăng/giảm thêm 2.0 USD</div>
                     </div>
                 </div>
             </div>
@@ -425,8 +425,8 @@
         </div>
 
         <div style="margin-top: 30px; padding: 20px; background: rgba(30, 30, 40, 0.6); border-radius: 12px; text-align: center; font-size: 0.9rem; opacity: 0.8;">
-            <p>🚀 <strong>HỆ THỐNG CẢNH BÁO GOLD SPIKE + PRESET MONITORS</strong> | Version 3.0 | © 2026</p>
-            <p>⚡ Khi có Spike, hệ thống đánh dấu mốc giá và báo lại khi giá tăng/giảm thêm N USD so với mốc đó</p>
+            <p>🚀 <strong>HỆ THỐNG CẢNH BÁO GOLD SPIKE + TTS VIỆT</strong> | Version 3.0 | © 2026</p>
+            <p>🔊 Khi có MARKER (giá tăng/giảm thêm N USD), hệ thống sẽ nói: <strong style="color:#f1c40f">"Nó bịp kìa"</strong></p>
         </div>
     </div>
 
@@ -447,13 +447,13 @@
         let lastSpikeAlertTime = 0;
         let spikeCooldownSeconds = 5;
         
-        // === TÍNH NĂNG ĐÁNH DẤU MỐC SPIKE ===
-        let enableSpikeMarker = false;      // Bật/tắt tính năng
-        let spikeMarkerStep = 2.0;          // Mốc giá (N USD)
-        let lastSpikePrice = null;           // Giá tại thời điểm Spike gần nhất
-        let lastSpikeDirection = null;       // Hướng của Spike ('UP' hoặc 'DOWN')
-        let lastMarkerAlertTime = 0;         // Thời gian báo lần cuối của marker
-        let markerCooldownSeconds = 2;       // Chống spam cho marker (2 giây)
+        // Spike Marker
+        let enableSpikeMarker = false;
+        let spikeMarkerStep = 2.0;
+        let lastSpikePrice = null;
+        let lastSpikeDirection = null;
+        let lastMarkerAlertTime = 0;
+        let markerCooldownSeconds = 2;
         
         // Preset Monitors
         let presetMonitors = {
@@ -482,11 +482,35 @@
         let currentMACD = 0;
         let currentRSI = 50;
         
+        // ==================== TTS FUNCTION ====================
+        function speakVietnamese(text) {
+            // Tạo utterance với giọng nói tiếng Việt
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'vi-VN';  // Tiếng Việt
+            utterance.rate = 0.9;      // Tốc độ nói (0.9 hơi chậm, dễ nghe)
+            utterance.pitch = 1.0;      // Cao độ bình thường
+            utterance.volume = 1.0;     // Âm lượng tối đa
+            
+            // Thử tìm giọng nói tiếng Việt nếu có
+            window.speechSynthesis.cancel(); // Dừng các utterance cũ
+            window.speechSynthesis.speak(utterance);
+            
+            console.log(`🔊 TTS: "${text}"`);
+        }
+        
+        function speakNoBiPkia() {
+            speakVietnamese("Nó bịp kìa");
+        }
+        
+        function testTTS() {
+            speakNoBiPkia();
+            showNotification('🎤 Đang phát TTS: "Nó bịp kìa"', 'info');
+        }
+        
         // ==================== KHỞI TẠO ====================
         function initializeSystem() {
             console.log('🚀 Đang khởi tạo hệ thống...');
             
-            // Load settings
             const savedThreshold = localStorage.getItem('spikeThreshold');
             if(savedThreshold) { document.getElementById('spikeThreshold').value = savedThreshold; spikeThreshold = parseFloat(savedThreshold); }
             
@@ -496,14 +520,12 @@
             const savedIndicatorCooldown = localStorage.getItem('indicatorCooldownSeconds');
             if(savedIndicatorCooldown) { indicatorCooldownSeconds = parseInt(savedIndicatorCooldown); document.getElementById('indicatorCooldown').value = indicatorCooldownSeconds; }
             
-            // Load Spike Marker settings
             const savedMarkerStep = localStorage.getItem('spikeMarkerStep');
             if(savedMarkerStep) { document.getElementById('spikeMarkerStep').value = savedMarkerStep; spikeMarkerStep = parseFloat(savedMarkerStep); }
             
             const savedEnableMarker = localStorage.getItem('enableSpikeMarker');
             if(savedEnableMarker !== null) { enableSpikeMarker = savedEnableMarker === 'true'; document.getElementById('enableSpikeMarker').checked = enableSpikeMarker; }
             
-            // Load preset monitors
             const savedMonitors = localStorage.getItem('presetMonitors');
             if (savedMonitors) {
                 presetMonitors = JSON.parse(savedMonitors);
@@ -519,7 +541,6 @@
             initChart();
             connectWebSocket();
             
-            // Event listeners
             document.getElementById('spikeThreshold').addEventListener('change', function() {
                 spikeThreshold = parseFloat(this.value);
                 localStorage.setItem('spikeThreshold', spikeThreshold);
@@ -537,9 +558,7 @@
             document.getElementById('enableSpikeMarker').addEventListener('change', function() {
                 enableSpikeMarker = this.checked;
                 localStorage.setItem('enableSpikeMarker', enableSpikeMarker);
-                if (!enableSpikeMarker) {
-                    resetSpikeMarker();
-                }
+                if (!enableSpikeMarker) { resetSpikeMarker(); }
                 showNotification(enableSpikeMarker ? '✅ Đã bật đánh dấu mốc Spike' : '❌ Đã tắt đánh dấu mốc Spike');
             });
 
@@ -574,9 +593,9 @@
                 document.getElementById('spikeMarkerValue').textContent = lastSpikePrice.toFixed(2) + ' USD';
                 const targetUp = (lastSpikePrice + spikeMarkerStep).toFixed(2);
                 const targetDown = (lastSpikePrice - spikeMarkerStep).toFixed(2);
-                if (lastSpikeDirection === 'UP') {
+                if (lastSpikeDirection === 'TĂNG') {
                     document.getElementById('spikeMarkerTarget').innerHTML = `🎯 Mục tiêu: Tăng thêm ${spikeMarkerStep} USD → ${targetUp} USD`;
-                } else if (lastSpikeDirection === 'DOWN') {
+                } else if (lastSpikeDirection === 'GIẢM') {
                     document.getElementById('spikeMarkerTarget').innerHTML = `🎯 Mục tiêu: Giảm thêm ${spikeMarkerStep} USD → ${targetDown} USD`;
                 } else {
                     document.getElementById('spikeMarkerTarget').innerHTML = `Chờ giá tăng/giảm ${spikeMarkerStep} USD so với mốc`;
@@ -681,7 +700,7 @@
             if (priceHistory.length > 1000) priceHistory.shift();
             
             checkVolatility(now);
-            checkSpikeMarker(now);  // KIỂM TRA MỐC SPIKE
+            checkSpikeMarker(now);
             
             updateIndicators();
             updateChart();
@@ -728,7 +747,6 @@
                     if (spikeEnabled && (currentTime - lastSpikeAlertTime >= cooldownMs)) {
                         // KHI SPIKE ĐẠT ĐIỀU KIỆN -> ĐÁNH DẤU MỐC MỚI
                         if (enableSpikeMarker) {
-                            // Xóa mốc cũ, đánh dấu mốc mới nhất
                             lastSpikePrice = currentPrice;
                             lastSpikeDirection = direction;
                             updateSpikeMarkerDisplay();
@@ -745,7 +763,7 @@
             }
         }
         
-        // ==================== KIỂM TRA MỐC SPIKE ====================
+        // ==================== KIỂM TRA MỐC SPIKE (CHỈ BÁO CÙNG HƯỚNG) ====================
         function checkSpikeMarker(currentTime) {
             if (!enableSpikeMarker || lastSpikePrice === null) return;
             
@@ -753,42 +771,37 @@
             if (currentTime - lastMarkerAlertTime < markerCooldownMs) return;
             
             let targetReached = false;
-            let targetDirection = '';
-            let targetPrice = 0;
+            let actualDiff = 0;
             
-            if (lastSpikeDirection === 'UP') {
-                // Chờ giá tăng thêm N USD so với mốc
+            if (lastSpikeDirection === 'TĂNG') {
+                // Chỉ báo khi giá TĂNG thêm N USD so với mốc (cùng hướng)
                 if (currentPrice >= lastSpikePrice + spikeMarkerStep) {
                     targetReached = true;
-                    targetDirection = 'TĂNG';
-                    targetPrice = lastSpikePrice + spikeMarkerStep;
+                    actualDiff = currentPrice - lastSpikePrice;
                 }
-            } else if (lastSpikeDirection === 'DOWN') {
-                // Chờ giá giảm thêm N USD so với mốc
+            } else if (lastSpikeDirection === 'GIẢM') {
+                // Chỉ báo khi giá GIẢM thêm N USD so với mốc (cùng hướng)
                 if (currentPrice <= lastSpikePrice - spikeMarkerStep) {
                     targetReached = true;
-                    targetDirection = 'GIẢM';
-                    targetPrice = lastSpikePrice - spikeMarkerStep;
+                    actualDiff = lastSpikePrice - currentPrice;
                 }
             }
             
             if (targetReached) {
                 lastMarkerAlertTime = currentTime;
-                const actualDiff = Math.abs(currentPrice - lastSpikePrice);
                 
-                // Phát âm thanh
-                spikeSound.currentTime = 0;
-                spikeSound.play().catch(e => console.log('Không thể phát âm thanh'));
+                // PHÁT TTS "Nó bịp kìa"
+                speakNoBiPkia();
                 
-                const msg = `🎯 [MARKER HIT] Giá đã ${targetDirection} thêm ${spikeMarkerStep} USD (tổng ${actualDiff.toFixed(2)} USD) so với mốc ${lastSpikePrice.toFixed(2)} → Giá hiện tại: ${currentPrice.toFixed(2)} USD`;
+                const msg = `🎯 [MARKER HIT] Giá đã ${lastSpikeDirection === 'TĂNG' ? 'TĂNG' : 'GIẢM'} thêm ${spikeMarkerStep} USD (tổng ${actualDiff.toFixed(2)} USD) so với mốc ${lastSpikePrice.toFixed(2)} → Giá hiện tại: ${currentPrice.toFixed(2)} USD | 🔊 "Nó bịp kìa"`;
                 showNotification(msg, 'warning');
                 logToHistory(msg);
                 
-                // Cập nhật mốc mới tại vị trí hiện tại (đặt lại mốc)
+                // Đặt lại mốc mới tại giá hiện tại (tiếp tục theo dõi cùng hướng)
                 lastSpikePrice = currentPrice;
-                lastSpikeDirection = targetDirection;
+                // Giữ nguyên lastSpikeDirection (vì vẫn cùng hướng)
                 updateSpikeMarkerDisplay();
-                logToHistory(`📌 [MARKER] Đã đặt lại mốc mới tại ${currentPrice.toFixed(2)} USD (hướng ${targetDirection})`);
+                logToHistory(`📌 [MARKER] Đã đặt lại mốc mới tại ${currentPrice.toFixed(2)} USD (tiếp tục hướng ${lastSpikeDirection})`);
             }
         }
 
@@ -1016,4 +1029,4 @@
         });
     </script>
 </body>
-    </html>
+</html>
